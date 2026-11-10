@@ -58,6 +58,7 @@ The modem you hear when you connect is built from a real recording: "Dial up
 connection" by ezwa, from [PDSounds](https://pdsounds.org/) (record 116),
 released into the public domain and hosted on
 [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Dial_up_connection.ogg).
-This copy is edited down to about 12 seconds, with the middle of the handshake cut out. The dial tone, touch tones and handshake
-are the recording's; the ring in the middle is a standard North American
-ringback (440 + 480 Hz) laid over the recording's own line noise.
+This copy is edited down to about 10 seconds, with the middle of the handshake cut out. The touch tones and handshake
+are the recording's. The dial tone (350 + 440 Hz, as used across Canada
+and the United States) and the ring in the middle (440 + 480 Hz ringback) are
+added over the recording's own line noise.
