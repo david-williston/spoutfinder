@@ -125,7 +125,7 @@ GATE.p.then(function () {
   var leds = {}; ["HS", "AA", "CD", "OH", "RD", "SD", "TR", "MR"].forEach(function (n) { leds[n] = document.getElementById("led-" + n); });
   var timers = [], flick = null, finished = false;
   var on = function (n, v) { leds[n].classList.toggle("on", v !== false); };
-  var T = { init: 0, tone: 400, dial: 1300, ring: 3150, carrier: 5800, nego: 9200, hs: 11100, up: 16800 };
+  var T = { init: 0, tone: 400, dial: 1300, ring: 3150, carrier: 5800, nego: 7600, hs: 9500, up: 12100 };
   var AUDIO_LAG = 300;   /* the sound starts a moment after the click */
 
   function at(ms, fn) { timers.push(setTimeout(fn, ms)); }
@@ -274,7 +274,7 @@ GATE.p.then(function () {
   });
 
   /* A real recording, not a synthesis: "Dial up connection" by ezwa, from PDSounds (record 116),
-     public domain, via Wikimedia Commons. Edited to 17 s: the dial tone and touch tones and the handshake are from the recording, the ring is a standard 440 + 480 Hz ringback. Fetched and decoded ahead
+     public domain, via Wikimedia Commons. Edited to 12.5 s: the dial tone and touch tones and the handshake are from the recording, the ring is a standard 440 + 480 Hz ringback. Fetched and decoded ahead
      of time so it can start the instant CONNECT is clicked. */
   var SRC = "{{ "audio/dial-up-connection.mp3" | relURL }}", bufP = null;
   function load() {
@@ -292,7 +292,7 @@ GATE.p.then(function () {
     var t0 = ctx.currentTime + 0.05;
     master = ctx.createGain(); master.gain.value = 0.9; master.connect(ctx.destination);
     var src = ctx.createBufferSource(); src.buffer = buf; src.connect(master); src.start(t0);
-    var T = { ring: 3.15, carrier: 5.8, nego: 9.2, end: 16.8 };
+    var T = { ring: 3.15, carrier: 5.8, nego: 7.6, end: 12.1 };
     var say = function (when, text) { timers.push(setTimeout(function () { CMD.set(text, true); }, when * 1000)); };
     CMD.lock = true;
     say(0.4, "ATDT 8822034");
