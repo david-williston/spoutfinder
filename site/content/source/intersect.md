@@ -1,6 +1,7 @@
 ---
 title: "intersect.lsp"
 weight: 20
+ShowToc: true
 hiddenInHomeList: true
 summary: "spout/pocket intersection and validity test"
 ---
@@ -8,6 +9,25 @@ summary: "spout/pocket intersection and validity test"
 intersect.lsp -- spout/pocket intersection and validity test
 
 Source: original program listing, pages 21-22.
+
+## In plain English
+
+The heart of the program. For one spout position it builds a circle, intersects it with the pocket surface, and decides whether the spout fits.
+
+*83 lines of code and comments, 32 of them comments.*
+
+## The pieces
+
+| Piece | What it is | Calls | Called by |
+| --- | --- | --- | --- |
+| [`doint`](#doint) | Draws a circle at the current point on the cell layer, turns it into a region (SOLIDIFY), copies the pocket surface, and intersects the two with SOLINT. | – | `GO` (missing pages, inferred) |
+| [`check`](#check) | Judges the overlap. No result means the spout is outside the pocket, so the circle and the copied surface are erased. | – | `GO` (missing pages, inferred) |
+
+## doint {#doint}
+
+Draws a circle at the current point on the cell layer, turns it into a region (SOLIDIFY), copies the pocket surface, and intersects the two with SOLINT. It returns the selection set holding the overlap.
+
+**32 lines.** Shared state it touches: `dia`, `pocksurfname`, `pocksurfset`, `stp`.
 
 ```lisp
 (defun doint ( / cellname newpocksurfname cell pock cellset resultset )
@@ -42,7 +62,18 @@ Source: original program listing, pages 21-22.
     (setq resultset(solint cellset "xy"))
     resultset
 )
-;--------------------------------------------------------
+```
+
+> **Look closely.** A fresh circle and a fresh copy are made every time because SOLINT empties the set it is given, so the code saves the entity names first. Selection sets are set to nil as soon as they are used so AutoLISP does not run out of them.
+
+
+## check {#check}
+
+Judges the overlap. No result means the spout is outside the pocket, so the circle and the copied surface are erased. Otherwise it measures the overlap with SOLAREA and calls the spout valid if the shortfall from a full circle is under the accuracy tolerance, drawing a circle there.
+
+**51 lines.** Shared state it touches: `accuracy`, `dia`, `stp`, `validity`.
+
+```lisp
 ;CHECK LOOKS AT THE RESULT OF DOINT TO SEE IF THE LOCATION IS
 ;A POSSIBLE POURING LOCATION
 (defun check ( resultset accuracy / resultname actualarea diff accu )
@@ -94,5 +125,6 @@ Source: original program listing, pages 21-22.
     )
     validity
 )
-;--------------------------------------------------------
 ```
+
+> **Look closely.** Every purgeflag cycles it calls SOLPURGE to clear erased solids out of the drawing file; the value of purgeflag is set on the missing pages. The result is the global validity flag, which the next step reads.

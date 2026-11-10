@@ -169,7 +169,7 @@ GATE.p.then(function () {
     var menu = {};
     Array.prototype.forEach.call(document.querySelectorAll("#menu a"), function (a) { menu[a.textContent.trim().toLowerCase()] = a.getAttribute("href"); });
     var items = [["A", "About this archive", "about"], ["D", "Documents: proposal and reports", "documents"],
-                 ["C", "Context: computing in 1994", "context"], ["G", "Gallery: the prototype and graduation", "gallery"],
+                 ["C", "Context: computing in 1994", "context"], ["G", "Gallery: the prototype and graduation", "gallery"], ["R", "Run the algorithm on the prototype", "run"],
                  ["S", "Source code: the AutoLISP listing", "source"], ["X", "Architecture: how it works", "architecture"]];
     var L = [
       { t: "CONNECT 14400/ARQ/V42BIS", c: "dim" },
@@ -426,7 +426,7 @@ GATE.p.then(function () {
   function onoff(a, cur) { a = (a || "").toLowerCase(); return a === "on" ? true : a === "off" ? false : !cur; }
   var COMMANDS = {
     help: function () {
-      out("Commands:\n  OPEN <name>   go to a page (try OPEN SOURCE, OPEN INTERSECT, OPEN GALLERY)\n  DIR           list the pages\n  WHO           who is online\n  ABOUT         what this place is\n  TIME          the time\n  CRT [ON|OFF]  the CRT effect\n  SOUND [ON|OFF]  the modem sound\n  LIGHT / DARK  the screen theme\n  REDIAL        connect again, from the start\n  ZOOM E        scroll to the top\n  CLS           clear this window\n  VER           version\nPress F2 to show or hide this window. ESC clears the line.");
+      out("Commands:\n  OPEN <name>   go to a page (try OPEN SOURCE, OPEN INTERSECT, OPEN GALLERY)\n  RUN           run the spout finder\n  DIR           list the pages\n  WHO           who is online\n  ABOUT         what this place is\n  TIME          the time\n  CRT [ON|OFF]  the CRT effect\n  SOUND [ON|OFF]  the modem sound\n  LIGHT / DARK  the screen theme\n  REDIAL        connect again, from the start\n  ZOOM E        scroll to the top\n  CLS           clear this window\n  VER           version\nPress F2 to show or hide this window. ESC clears the line.");
     },
     dir: function () {
       out(" Volume in drive A is SPOUTFINDER\n Directory of A:\\\n");
@@ -453,7 +453,7 @@ GATE.p.then(function () {
     quit: function () { COMMANDS.exit(); },
     open: function (a) { var p = find(a.join(" ")); if (p) go(p); else out('No page called "' + a.join(" ") + '". Type DIR for a list.', "err"); }
   };
-  COMMANDS["?"] = COMMANDS.help; COMMANDS.list = COMMANDS.dir; COMMANDS.snd = COMMANDS.sound; COMMANDS.regen = function () { location.reload(); };
+  COMMANDS["?"] = COMMANDS.help; COMMANDS.list = COMMANDS.dir; COMMANDS.run = function () { var p = find('run'); if (p) go(p); }; COMMANDS.go = COMMANDS.run; COMMANDS.snd = COMMANDS.sound; COMMANDS.regen = function () { location.reload(); };
   function setTheme(t) { root.dataset.theme = t; store("pref-theme", t); }
   function run(line) {
     var raw = line.trim(); if (!raw) return;

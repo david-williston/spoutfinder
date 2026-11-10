@@ -45,6 +45,7 @@ machine to read.
 - [Gallery](../gallery/): a prototype sole and photographs from graduation
 - [Source](../source/): the AutoLISP listing (pages 19 to 26) and the variable listing (page 27)
 - [Architecture](../architecture/): how the functions fit together, drawn today
+- [Run](../run/): watch the algorithm work through the prototype's pockets
 
 ## What is missing
 

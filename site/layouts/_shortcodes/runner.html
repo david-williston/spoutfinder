@@ -1,0 +1,33 @@
+<div id="runner" class="runner" data-src="{{ "data/sole.json" | relURL }}">
+  <figure class="cad-screen rn-screen">
+    <canvas id="rn-canvas" aria-label="The prototype sole's pockets, with the spout finder running over them"></canvas>
+    <figcaption id="rn-status" aria-live="polite">Press RUN to start the program.</figcaption>
+  </figure>
+  <div class="rn-bar">
+    <button type="button" id="rn-run">RUN</button>
+    <button type="button" id="rn-pause" disabled>PAUSE</button>
+    <button type="button" id="rn-reset">RESET</button>
+  </div>
+  <div class="rn-panels">
+    <div class="cad-screen rn-box">
+      <div class="rn-h">Parameters (fixed)</div>
+      <div class="rn-row"><span>Spout diameter</span><b>18</b></div>
+      <div class="rn-row"><span>Spout pitch</span><b>23</b></div>
+      <div class="rn-row"><span>Increment distance</span><b>23</b></div>
+      <div class="rn-row"><span>Spout accuracy</span><b>2 %</b></div>
+      <div class="rn-row"><span>Output file</span><b>OUTPUT.SDF</b></div>
+    </div>
+    <div class="cad-screen rn-box">
+      <div class="rn-h">Progress</div>
+      <div class="rn-row"><span>Pocket</span><b id="rn-pocket">0 / 0</b></div>
+      <div class="rn-row"><span>Skipped by bounding box</span><b id="rn-skip">0</b></div>
+      <div class="rn-row"><span>Spouts tested</span><b id="rn-tested">0</b></div>
+      <div class="rn-row"><span>Valid locations</span><b id="rn-valid" class="ok">0</b></div>
+      <div class="rn-row"><span>Rejected</span><b id="rn-bad" class="bad">0</b></div>
+    </div>
+  </div>
+  <pre id="rn-log" class="cad-screen rn-log" aria-live="off"></pre>
+  <pre id="rn-sdf" class="cad-screen rn-sdf" hidden></pre>
+</div>
+{{ $js := resources.Get "js/runner.js" | resources.Minify | fingerprint }}
+<script src="{{ $js.RelPermalink }}" integrity="{{ $js.Data.Integrity }}" defer></script>

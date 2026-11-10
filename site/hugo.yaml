@@ -22,6 +22,8 @@ params:
       keeps the proposal, the reports and the code as a look at how
       engineering was done when computers were slow and expensive and
       "printing" meant ink on paper.
+
+      **[Run the spout finder](run/)** and watch the algorithm work.
   socialIcons:
     - name: github
       url: https://github.com/david-williston/spoutfinder
@@ -40,6 +42,9 @@ menu:
     - name: Gallery
       url: /gallery/
       weight: 28
+    - name: Run
+      url: /run/
+      weight: 35
     - name: Source
       url: /source/
       weight: 30

@@ -9,6 +9,7 @@ fits inside one region, otherwise it is rejected (dashed red).
 Needs: pillow, numpy, scipy, matplotlib (for contourpy).
 Writes layouts/_partials/home_info.html.
 """
+import json
 import pathlib
 import numpy as np
 from PIL import Image
@@ -86,6 +87,15 @@ def polygons(mask, min_area=500, eps=1.2):
 
 def svgpts(p):
     return " ".join(f"{OX + x * SCALE:.1f},{OY + y * SCALE:.1f}" for x, y in p)
+
+# ---- export the traced shapes for the Run page ----
+def pts(p):
+    return [[round(OX + x * SCALE, 1), round(OY + y * SCALE, 1)] for x, y in p]
+data = {"w": W, "h": H,
+        "outline": [pts(p) for p in polygons(shape, min_area=5000, eps=1.6)],
+        "layers": [{"name": n, "color": col, "polys": [pts(p) for p in polygons(m)]} for n, m, col in layers]}
+(HERE / "static/data").mkdir(parents=True, exist_ok=True)
+(HERE / "static/data/sole.json").write_text(json.dumps(data, separators=(",", ":")))
 
 # ---- draw -------------------------------------------------------------------
 o = []

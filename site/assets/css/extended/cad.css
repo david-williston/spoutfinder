@@ -207,7 +207,7 @@ a.bbs-line:hover, a.bbs-line:focus-visible { background: var(--cad-white); color
 :root[data-theme="light"] .post-content code:not(pre code), :root[data-theme="light"] code:not(pre code) { color: var(--cad-yellow); }
 /* black "screens" keep the bright palette whatever the page theme */
 :root[data-theme="light"] pre, :root[data-theme="light"] .highlight, :root[data-theme="light"] .cad-screen,
-:root[data-theme="light"] .mermaid, :root[data-theme="light"] #dialup, :root[data-theme="light"] .copy-code {
+:root[data-theme="light"] .mermaid, :root[data-theme="light"] #dialup, :root[data-theme="light"] .rn-bar button, :root[data-theme="light"] .copy-code {
     --bg: #000; --shadow: #1a1a1a; --border: #5a5a5a; --secondary: #7a7a7a; --content: #c8c8c8; --code-bg: #101010;
     --cad-cyan: #00e5e5; --cad-green: #00e000; --cad-yellow: #f5e400; --cad-red: #ff3030; --cad-magenta: #e040e0; --cad-white: #f0f0f0;
 }
@@ -266,3 +266,22 @@ html.crt body { text-shadow: 0 0 3px rgba(120, 255, 220, .28); }
 #cmdlog-body { max-height: 36vh; overflow-y: auto; padding: 6px 12px; white-space: pre-wrap; text-shadow: none; }
 #cmdlog-body .echo { color: #f5e400; }
 #cmdlog-body .err { color: #ff3030; }
+
+/* ---- Run page ---- */
+.runner .rn-screen { margin: 0 0 12px; }
+.runner canvas { display: block; width: 100%; height: auto; background: #000; }
+.rn-bar { display: flex; gap: 12px; margin: 0 0 12px; }
+.rn-bar button { font: inherit; background: var(--bg); color: var(--cad-cyan); border: 2px solid var(--cad-cyan); padding: 2px 22px; cursor: pointer; }
+.rn-bar button:hover:not(:disabled), .rn-bar button:focus-visible { background: var(--cad-white); color: var(--bg); border-color: var(--cad-white); outline: none; }
+.rn-bar button:disabled { opacity: .35; cursor: default; }
+.rn-panels { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+.rn-box { padding: 6px 12px; margin: 0 !important; }
+.rn-row { display: flex; justify-content: space-between; gap: 12px; }
+.rn-row span { color: var(--secondary); }
+.rn-row b { font-weight: normal; color: var(--cad-yellow); }
+.rn-box .rn-h { color: var(--cad-cyan); text-transform: uppercase; border-bottom: 1px dashed #5a5a5a; margin-bottom: 4px; }
+.rn-row b.ok { color: var(--cad-green); } .rn-row b.bad { color: var(--cad-red); }
+.rn-log, .rn-sdf { font-size: 18px; line-height: 1.2; padding: 6px 12px; margin: 0 0 12px !important; max-height: 260px; overflow: auto; white-space: pre; color: var(--cad-green); }
+.rn-sdf { color: var(--secondary); max-height: 340px; }
+.rn-sdf .z { color: #555; }
+@media (max-width: 600px) { .rn-panels { grid-template-columns: 1fr; } }

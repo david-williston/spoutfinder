@@ -36,8 +36,8 @@ whole grid, so every pocket produces a list of exactly the same length.
 
 Boxes are grouped by file in `src/`. The `GO` entry point (`main`) is on the
 missing pages 1 to 18, so its calls (dashed arrows) are inferred from the
-variable listing and the function comments. Solid arrows are calls visible in
-the code.
+variable listing and the function comments. The only call visible in the
+transcribed code is the solid arrow from `my_error` to `my_reset`.
 
 ```mermaid
 flowchart TD
@@ -86,8 +86,8 @@ flowchart TD
     main -.->|"per spout location"| seeiflocal
     seeiflocal -.->|"inside bounding box"| doint
     main -.-> doint
-    doint -->|"resultset"| check
-    check -->|"validity"| buildlist
+    doint -.->|"resultset"| check
+    check -.->|"validity"| buildlist
     main -.-> nextspout
     main -.-> nextrow
     main -.->|"after each pocket"| combine

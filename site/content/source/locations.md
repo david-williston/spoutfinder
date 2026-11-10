@@ -1,6 +1,7 @@
 ---
 title: "locations.lsp"
 weight: 30
+ShowToc: true
 hiddenInHomeList: true
 summary: "spout grid stepping and the pouring-location lists"
 ---
@@ -8,6 +9,27 @@ summary: "spout grid stepping and the pouring-location lists"
 locations.lsp -- spout grid stepping and the pouring-location lists
 
 Source: original program listing, pages 23-24.
+
+## In plain English
+
+Walks the grid of spout positions and keeps the results: one list per pocket, merged into a single list for the whole job.
+
+*105 lines of code and comments, 42 of them comments.*
+
+## The pieces
+
+| Piece | What it is | Calls | Called by |
+| --- | --- | --- | --- |
+| [`buildlist`](#buildlist) | Adds one entry to the temporary list for the current position: the pocket's entity name where a spout is valid, 0 where it is not. | – | `GO` (missing pages, inferred) |
+| [`nextspout`](#nextspout) | Moves the current point one spout pitch along y. | – | `GO` (missing pages, inferred) |
+| [`nextrow`](#nextrow) | Resets y to 0 and moves x over by the increment distance, starting the next row. | – | `GO` (missing pages, inferred) |
+| [`combine`](#combine) | Merges the list for the current pocket into the running list for all pockets. | – | `GO` (missing pages, inferred) |
+
+## buildlist {#buildlist}
+
+Adds one entry to the temporary list for the current position: the pocket's entity name where a spout is valid, 0 where it is not. A position of (0, 0) starts a new list.
+
+**44 lines.** Shared state it touches: `pockset`, `stp`, `templist`, `validity`.
 
 ```lisp
 ;BUILDLIST BUILDS THE TEMPORARY PROGRAM OUTPUT BY RECORDING IN A LIST THE
@@ -54,7 +76,18 @@ Source: original program listing, pages 23-24.
         )
     )
 )
-;--------------------------------------------------------
+```
+
+> **Look closely.** The comment explains the entity name is a stand-in; it was meant to be replaced by a time value once the pour volume was calculated.
+
+
+## nextspout {#nextspout}
+
+Moves the current point one spout pitch along y.
+
+**7 lines.** Shared state it touches: `pitch`, `stp`.
+
+```lisp
 ;NEXTSPOUT MOVES STP TO THE NEXT SPOUT LOCATION
 (defun nextspout ( / x y )
     (setq x(nth 0 stp))
@@ -62,14 +95,33 @@ Source: original program listing, pages 23-24.
     (setq y(+ y pitch))
     (setq stp(list x y 0))
 )
-;--------------------------------------------------------
+```
+
+
+## nextrow {#nextrow}
+
+Resets y to 0 and moves x over by the increment distance, starting the next row.
+
+**7 lines.** Shared state it touches: `inc`, `stp`.
+
+```lisp
 ;NEXTROW MOVES STP TO THE NEXT ROW
 (defun nextrow ( / x y )
     (setq x(nth 0 stp))
     (setq y 0)
     (setq x(+ x inc))
     (setq stp(list x y 0))
-);--------------------------------------------------------
+)
+```
+
+
+## combine {#combine}
+
+Merges the list for the current pocket into the running list for all pockets. Position by position it keeps an entity name from the earlier list if there is one, otherwise takes the new list's entry.
+
+**47 lines.** Shared state it touches: `combinedlist`, `incs`, `spouts`, `templist`.
+
+```lisp
 ;COMBINE COMBINES THE PREVIOUS AND CURRENT TEMPLISTS OF POURING LOCATIONS
 (defun combine ( / e1 e2 listlength newcombinedlist )
     ;THE LENGTH OF THE LISTS IS ALWAYS SPOUTS TIMES INCREMENTS
@@ -117,5 +169,6 @@ Source: original program listing, pages 23-24.
     ;SET THE NEW COMBINED LIST TO THE COMBINED LIST
     (setq combinedlist newcombinedlist)
 )
-;--------------------------------------------------------
 ```
+
+> **Look closely.** The list length is always spouts times increments, so the two lists line up exactly and can be merged with a simple counter.
