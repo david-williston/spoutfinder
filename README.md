@@ -20,6 +20,12 @@ and writes the valid locations to a space-delimited `.sdf` data file.
 
 See [docs/architecture.md](docs/architecture.md) for a diagram of how the pieces fit together.
 
+## Website
+
+The `site/` directory is a Hugo site using the PaperMod theme (a git submodule).
+Run `python3 site/sync.py` to regenerate its content from `docs/` and `src/`, then
+`hugo server --source site`. Clone with `--recurse-submodules` to get the theme.
+
 ## Status
 
 This is a transcription of printed pages 19-26 of the listing. Pages 1-18 are
