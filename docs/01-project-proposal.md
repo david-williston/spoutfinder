@@ -9,7 +9,7 @@
 - Mr. Tim Peachey, Internal Sponsor, BCIT Technology Centre
 - Wetless Aqua Gear, Industry Client
 
-**By:** David J. Suggitt, set MECH 4A, Student of BCIT CAD/CAM Technology
+**By:** David J. Williston, set MECH 4A, Student of BCIT CAD/CAM Technology
 
 **Date:** January 23 1994
 

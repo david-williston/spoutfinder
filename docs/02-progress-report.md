@@ -8,7 +8,7 @@
 - Tim Peachey, Sponsor
 - Wetless Aqua Gear, Industry Client
 
-**By:** David Suggitt, BCIT CAD/CAM Student MECH4A
+**By:** David Williston, BCIT CAD/CAM Student MECH4A
 
 **Report Period:** Jan 20 - Feb 24 1994
 
