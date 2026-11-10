@@ -29,10 +29,11 @@ for i, (src, title, summary) in enumerate([
     ("01-project-proposal.md", "Project Proposal", "January 23 1994"),
     ("02-progress-report.md", "Progress Report #1", "February 21 1994"),
     ("03-final-report.md", "Final Report", "Project summary and acknowledgments"),
+    ("04-variable-listing.md", "Variable Listing", "Every variable in the program, with type and scope"),
 ], 1):
     body = (repo / "docs" / src).read_text()
     body = re.sub(r"\A# .*\n+", "", body)
-    page(docs / src.split("-", 1)[1], title, body, i * 10, summary)
+    page(docs / src.split("-", 1)[1], title, body, i * 10, summary, hide_home=src.startswith("04"))
 
 # ---- source --------------------------------------------------------------
 source = content / "source"
