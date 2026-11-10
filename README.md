@@ -18,6 +18,8 @@ and writes the valid locations to a space-delimited `.sdf` data file.
 | `src/output.lsp` | `output`, startup banner | 26 |
 | `docs/` | Proposal, progress report, final report, variable listing (see `docs/README.md`) | 27 |
 
+See [docs/architecture.md](docs/architecture.md) for a diagram of how the pieces fit together.
+
 ## Status
 
 This is a transcription of printed pages 19-26 of the listing. Pages 1-18 are
