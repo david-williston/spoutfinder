@@ -154,4 +154,4 @@ Each box in the call graph is a file under [Source](../source/): the prompts in
 [locations.lsp](../source/locations/), the housekeeping in
 [session.lsp](../source/session/) and the file writer in
 [output.lsp](../source/output/). Every variable is described in the
-[variable listing](../docs/variable-listing/).
+[variable listing](../source/variable-listing/).

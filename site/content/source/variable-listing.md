@@ -1,6 +1,6 @@
 ---
 title: "Variable Listing"
-weight: 40
+weight: 100
 summary: "Every variable in the program, with type and scope"
 ---
 

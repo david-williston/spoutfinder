@@ -1,5 +1,7 @@
 /* AutoCAD R12 for DOS look: black screen, VGA colours, command line */
-:root, :root[data-theme="dark"], :root[data-theme="light"] {
+:root, :root[data-theme="dark"] {
+    --bg: #000;
+    --shadow: #1a1a1a;
     --theme: #000;
     --entry: #000;
     --primary: #c8c8c8;
@@ -21,7 +23,7 @@
     color-scheme: dark;
 }
 html, body {
-    background: #000;
+    background: var(--bg);
     font-family: "VT323", "IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
     font-size: 21px;
     line-height: 1.35;
@@ -36,7 +38,7 @@ a:hover { color: var(--cad-yellow); }
 /* headings: yellow, uppercase, like menu titles */
 h1, h2, h3, h4 { font-family: inherit; text-transform: uppercase; letter-spacing: 1px; font-weight: normal; }
 h1 { color: var(--cad-yellow); }
-h2 { color: var(--cad-cyan); border-bottom: 1px dashed #3a3a3a; padding-bottom: 2px; }
+h2 { color: var(--cad-cyan); border-bottom: 1px dashed var(--border); padding-bottom: 2px; }
 h3 { color: var(--cad-green); }
 h4 { color: var(--cad-magenta); }
 .post-title, .entry-header h1 { color: var(--cad-yellow); font-size: 40px; }
@@ -44,13 +46,13 @@ h4 { color: var(--cad-magenta); }
 .post-description, .post-meta { color: var(--secondary); }
 
 /* top bar = drawing status line */
-.header { border-bottom: 2px solid var(--cad-white); background: #000; }
+.header { border-bottom: 2px solid var(--cad-white); background: var(--bg); }
 .nav { max-width: var(--nav-width); }
 .logo a { color: var(--cad-white); text-transform: uppercase; letter-spacing: 3px; }
 .logo a::before { content: "[ "; color: var(--cad-red); }
 .logo a::after { content: " ]"; color: var(--cad-red); }
 #menu a { text-transform: uppercase; color: var(--cad-cyan); padding: 0 6px; }
-#menu a:hover, #menu .active { background: var(--cad-white); color: #000; }
+#menu a:hover, #menu .active { background: var(--cad-white); color: var(--bg); }
 #menu .active { border: 0; font-weight: normal; }
 .main { max-width: var(--main-width); }
 
@@ -59,24 +61,24 @@ h4 { color: var(--cad-magenta); }
     border-radius: 0;
 }
 .post-entry {
-    background: #000;
+    background: var(--bg);
     border: 1px solid var(--border);
-    box-shadow: 4px 4px 0 #1a1a1a;
+    box-shadow: 4px 4px 0 var(--shadow);
     transition: none;
 }
 .post-entry:hover { background: var(--cad-white); border-color: var(--cad-white); transform: none; }
 .post-entry:hover .entry-header h2,
 .post-entry:hover .entry-content,
-.post-entry:hover .entry-footer { color: #000; }
+.post-entry:hover .entry-footer { color: var(--bg); }
 .entry-header h2 { color: var(--cad-yellow); border: 0; font-size: 28px; }
 .entry-content { color: var(--content); }
 .entry-link:focus { outline: none; }
 .first-entry { min-height: 0; margin: 24px 0; }
-.home-info { border: 2px double var(--cad-white); padding: 16px 20px; background: #000; }
+.home-info { border: 2px double var(--cad-white); padding: 16px 20px; background: var(--bg); }
 .home-info .entry-header h1 { margin: 0 0 8px; }
 .home-info .entry-header h1::before { content: "SPOUTFINDER> "; color: var(--cad-green); font-size: 0.5em; }
 
-.toc { background: #000; border: 1px solid var(--border); }
+.toc { background: var(--bg); border: 1px solid var(--border); }
 .toc summary { color: var(--cad-green); text-transform: uppercase; }
 .breadcrumbs { color: var(--secondary); text-transform: uppercase; }
 
@@ -90,7 +92,7 @@ h4 { color: var(--cad-magenta); }
     font-size: 19px;
     line-height: 1.25;
 }
-.post-content code, code { font-family: "VT323", ui-monospace, monospace; background: #101010; color: var(--cad-yellow); border-radius: 0; }
+.post-content code, code { font-family: "VT323", ui-monospace, monospace; background: var(--code-bg); color: var(--cad-yellow); border-radius: 0; }
 .post-content pre code { background: transparent; color: inherit; }
 .highlight .c, .highlight .c1, .highlight .cm { color: #2f9f6f; font-style: normal; }
 .highlight .s, .highlight .s2, .highlight .s1 { color: var(--cad-yellow); }
@@ -98,11 +100,11 @@ h4 { color: var(--cad-magenta); }
 .highlight .mi, .highlight .mf { color: var(--cad-magenta); }
 .copy-code { background: #000; color: var(--cad-white); border: 1px solid var(--border); border-radius: 0; font-family: inherit; }
 .post-content table { border: 1px solid var(--border); border-collapse: collapse; font-size: 0.9em; }
-.post-content th, .post-content td { border: 1px solid #333; padding: 2px 8px; }
-.post-content th { color: var(--cad-cyan); text-transform: uppercase; background: #0b0b0b; }
-.post-content table tbody tr:hover { background: #12202a; }
+.post-content th, .post-content td { border: 1px solid var(--border); padding: 2px 8px; }
+.post-content th { color: var(--cad-cyan); text-transform: uppercase; background: var(--code-bg); }
+.post-content table tbody tr:hover { background: var(--tertiary); }
 .post-content blockquote { border-left: 4px solid var(--cad-red); color: var(--secondary); }
-.post-content hr, hr { border-color: #333; }
+.post-content hr, hr { border-color: var(--border); }
 .mermaid { background: #000; border: 1px solid var(--border); padding: 8px; overflow-x: auto; }
 
 /* AME drawing on the home page */
@@ -116,7 +118,7 @@ h4 { color: var(--cad-magenta); }
 /* command line pinned to the bottom, like the DOS text window */
 .cmdline {
     position: fixed; left: 0; right: 0; bottom: 0; z-index: 50;
-    background: #000; border-top: 2px solid var(--cad-white);
+    background: var(--bg); border-top: 2px solid var(--cad-white);
     padding: 4px 16px; color: var(--cad-white);
     font-size: 20px; display: flex; justify-content: space-between; gap: 16px;
 }
@@ -132,7 +134,7 @@ h4 { color: var(--cad-magenta); }
 @media (prefers-reduced-motion: reduce) { .cmdline .cursor { animation: none; } }
 
 /* photographs: framed like plotted drawings */
-.post-content img { border: 1px solid var(--cad-white); padding: 4px; background: #000; display: block; margin: 12px 0; max-width: 100%; height: auto; }
+.post-content img { border: 1px solid var(--cad-white); padding: 4px; background: var(--bg); display: block; margin: 12px 0; max-width: 100%; height: auto; }
 .post-content img[alt*="prototype" i], .post-content img[alt*="printed photograph" i] { max-height: 80vh; width: auto; }
 
 /* 486 mode: blocks stay hidden until the redraw reveals them */
@@ -146,7 +148,7 @@ h4 { color: var(--cad-magenta); }
 
 .cmdline .cmd-right { display: flex; gap: 16px; align-items: baseline; }
 #snd { background: none; border: 0; color: var(--cad-cyan); font: inherit; cursor: pointer; padding: 0; }
-#snd:hover { background: var(--cad-white); color: #000; }
+#snd:hover { background: var(--cad-white); color: var(--bg); }
 
 /* dial-up screen shown on the first visit of a session */
 #dialup { display: none; }
@@ -181,3 +183,39 @@ a.bbs-line { color: var(--cad-white); text-decoration: none; padding-left: 12px;
 a.bbs-line:hover, a.bbs-line:focus-visible { background: var(--cad-white); color: #000; outline: none; }
 .bbs-cursor { display: inline-block; width: .55em; height: .9em; margin-left: 2px; background: var(--cad-green); vertical-align: -2px; animation: blink 1s steps(1) infinite; }
 .dialup #dialup.bbs-on { align-items: flex-start; padding-top: 5vh; }
+
+/* ---- light mode: the page goes to a white drawing sheet; screens stay black like CRT windows ---- */
+:root[data-theme="light"] {
+    --bg: #faf8f2;
+    --shadow: #d6d2c6;
+    --theme: #faf8f2;
+    --entry: #faf8f2;
+    --primary: #1c1c1c;
+    --secondary: #5a5a5a;
+    --tertiary: #e3e0d6;
+    --content: #222;
+    --code-bg: #ece9df;
+    --border: #8a8a8a;
+    --cad-cyan: #00727a;
+    --cad-green: #00742a;
+    --cad-yellow: #7a5f00;
+    --cad-red: #b00020;
+    --cad-magenta: #8a008a;
+    --cad-white: #161616;
+    color-scheme: light;
+}
+:root[data-theme="light"] ::selection { background: var(--cad-cyan); color: #fff; }
+:root[data-theme="light"] .post-content code:not(pre code), :root[data-theme="light"] code:not(pre code) { color: var(--cad-yellow); }
+/* black "screens" keep the bright palette whatever the page theme */
+:root[data-theme="light"] pre, :root[data-theme="light"] .highlight, :root[data-theme="light"] .cad-screen,
+:root[data-theme="light"] .mermaid, :root[data-theme="light"] #dialup, :root[data-theme="light"] .copy-code {
+    --bg: #000; --shadow: #1a1a1a; --border: #5a5a5a; --secondary: #7a7a7a; --content: #c8c8c8; --code-bg: #101010;
+    --cad-cyan: #00e5e5; --cad-green: #00e000; --cad-yellow: #f5e400; --cad-red: #ff3030; --cad-magenta: #e040e0; --cad-white: #f0f0f0;
+}
+:root[data-theme="light"] .post-content img, :root[data-theme="light"] .post-content canvas.modem { background: #000; }
+
+/* the light/dark switch in the top bar */
+#theme-toggle { color: var(--cad-cyan); border: 1px solid var(--cad-cyan); padding: 3px 7px; margin-left: 10px; height: auto; cursor: pointer; background: transparent; }
+#theme-toggle:hover { background: var(--cad-white); color: var(--bg); border-color: var(--cad-white); }
+#theme-toggle svg { height: 18px; width: 18px; stroke: currentColor; }
+.logo-switches { align-items: center; }

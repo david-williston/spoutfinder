@@ -1,6 +1,7 @@
 ---
 title: "intersect.lsp"
-weight: 120
+weight: 20
+summary: "spout/pocket intersection and validity test"
 ---
 
 intersect.lsp -- spout/pocket intersection and validity test

@@ -11,8 +11,10 @@ def reset(d):
         shutil.rmtree(d)
     d.mkdir(parents=True)
 
-def page(path, title, body, weight, summary=None):
+def page(path, title, body, weight, summary=None, hide_home=False):
     fm = ["---", f'title: "{title}"', f"weight: {weight}"]
+    if hide_home:
+        fm.append("hiddenInHomeList: true")
     if summary:
         fm.append(f'summary: "{summary}"')
     fm.append("---\n")
@@ -27,7 +29,6 @@ for i, (src, title, summary) in enumerate([
     ("01-project-proposal.md", "Project Proposal", "January 23 1994"),
     ("02-progress-report.md", "Progress Report #1", "February 21 1994"),
     ("03-final-report.md", "Final Report", "Project summary and acknowledgments"),
-    ("04-variable-listing.md", "Variable Listing", "Every variable in the program, with type and scope"),
 ], 1):
     body = (repo / "docs" / src).read_text()
     body = re.sub(r"\A# .*\n+", "", body)
@@ -38,7 +39,7 @@ source = content / "source"
 reset(source)
 page(source / "_index.md", "Source",
      "The AutoLISP listing, pages 19 to 26 of the original, split by function. "
-     "Pages 1 to 18 (the `GO` entry point and the start of `getparams`) are not yet transcribed.", 0)
+     "Pages 1 to 18 (the `GO` entry point and the start of `getparams`) are not yet transcribed. Includes the variable listing from page 27.", 0)
 for i, f in enumerate(sorted((repo / "src").glob("*.lsp")), 1):
     text = f.read_text()
     m = re.match(r"((?:;;;.*\n)+)", text)
@@ -47,10 +48,15 @@ for i, f in enumerate(sorted((repo / "src").glob("*.lsp")), 1):
     intro = ""
     for l in lines:
         intro += ("\n\n" if re.match(r"(Source|NOTE):", l) or not intro else "\n") + l
+    intro = intro.strip()
     first = intro.splitlines()[0] if intro else f.name
     title = f.name
     summary = first.split("--", 1)[-1].strip()
     body = f"{intro}\n\n```lisp\n{text[len(header):].lstrip()}```\n"
-    page(source / (f.stem + ".md"), title, body, 100 + i * 10, summary)
+    page(source / (f.stem + ".md"), title, body, i * 10, summary)
 
+# the variable listing is page 27 of the program listing, so it lives with the source
+vl = (repo / "docs" / "04-variable-listing.md").read_text()
+vl = re.sub(r"\A# .*\n+", "", vl)
+page(source / "variable-listing.md", "Variable Listing", vl, 100, "Every variable in the program, with type and scope")
 print("synced")

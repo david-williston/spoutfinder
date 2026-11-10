@@ -1,6 +1,7 @@
 ---
 title: "pocket.lsp"
-weight: 150
+weight: 50
+summary: "pocket geometry: surface region, volume, bounding-box test"
 ---
 
 pocket.lsp -- pocket geometry: surface region, volume, bounding-box test

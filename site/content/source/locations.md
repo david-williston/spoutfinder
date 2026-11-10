@@ -1,6 +1,7 @@
 ---
 title: "locations.lsp"
-weight: 130
+weight: 30
+summary: "spout grid stepping and the pouring-location lists"
 ---
 
 locations.lsp -- spout grid stepping and the pouring-location lists

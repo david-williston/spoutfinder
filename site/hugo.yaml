@@ -9,7 +9,6 @@ params:
   mainSections: [docs, source]
   description: "A historical archive: SpoutFinder, a 1994 BCIT CAD/CAM student project written in AutoLISP for AutoCAD Release 12 on a 486 PC"
   defaultTheme: dark
-  disableThemeToggle: true
   ShowReadingTime: false
   ShowBreadCrumbs: true
   ShowCodeCopyButtons: true
