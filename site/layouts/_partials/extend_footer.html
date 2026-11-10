@@ -1,6 +1,8 @@
+<div id="cmdlog" hidden role="log" aria-live="polite"><div id="cmdlog-body"></div></div>
 <div class="cmdline">
   <span aria-hidden="true">Command: <span id="cmdtext"></span><span class="cursor"></span></span>
-  <span class="cmd-right"><button type="button" id="snd" aria-pressed="true" title="Toggle the modem sound">[SND ON]</button><span class="coords" id="coords" aria-hidden="true">X: 0000.0000  Y: 0000.0000  Z: 0.0000</span></span>
+  <input id="cmdinput" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Command line. Type HELP for commands.">
+  <span class="cmd-right"><button type="button" id="crtbtn" aria-pressed="true" title="Toggle the CRT effect">[CRT ON]</button><button type="button" id="snd" aria-pressed="true" title="Toggle the modem sound">[SND ON]</button><span class="coords" id="coords" aria-hidden="true">X: 0000.0000  Y: 0000.0000  Z: 0.0000</span></span>
 </div>
 <script>
   window.GATE = (function () {
@@ -190,8 +192,11 @@ GATE.p.then(function () {
       { t: "a time when computers were slow and expensive, and the word" },
       { t: "\"printing\" meant ink on paper." },
       { t: "" },
-      { t: "---------------- MAIN MENU ----------------", c: "dim" }
+      { t: "---------------- WHO'S ONLINE (simulated) ----------------", c: "dim" }
     ];
+    (window.WHO ? window.WHO("reading the welcome screen") : []).forEach(function (t) { L.push({ t: t }); });
+    L.push({ t: "" });
+    L.push({ t: "---------------- MAIN MENU ----------------", c: "dim" });
     items.forEach(function (it) { L.push({ key: it[0], label: it[1], href: menu[it[2]] }); });
     L.push({ key: "ENTER", label: "Enter the archive", href: "" });
     L.push({ t: "" });
@@ -354,5 +359,129 @@ GATE.p.then(function () {
     setTimeout(function () { if (ctx && ctx.state === "running") start(); }, 400);
   }
   window.MODEM = { state: function () { return ctx && ctx.state; }, stop: function () { stop(); }, play: function () { if (!muted) { sess("modemPlayed", null); call(); } }, muted: function () { return muted; } };
+})();
+</script>
+{{ $idx := slice }}
+{{ range site.Sections }}{{ $idx = $idx | append (dict "t" .Title "u" .RelPermalink "d" 1) }}{{ end }}
+{{ range site.RegularPages }}{{ $idx = $idx | append (dict "t" .Title "u" .RelPermalink "d" 0) }}{{ end }}
+<script>window.SITEIDX = {{ $idx | jsonify | safeJS }};</script>
+<div id="crt" aria-hidden="true"></div>
+<script>
+/* CRT mode + the command line + who's online */
+(function () {
+  var root = document.documentElement, t0 = Date.now();
+  var $ = function (id) { return document.getElementById(id); };
+  var store = function (k, v) { try { if (v === undefined) return localStorage.getItem(k); localStorage.setItem(k, v); } catch (e) {} };
+
+  /* ---- CRT ---- */
+  var crtBtn = $("crtbtn");
+  function setCrt(on, quiet) {
+    root.classList.toggle("crt", on); store("crt", on ? "on" : "off");
+    crtBtn.textContent = on ? "[CRT ON]" : "[CRT OFF]"; crtBtn.setAttribute("aria-pressed", String(on));
+    if (!quiet) out("CRT effect " + (on ? "on" : "off") + ".");
+  }
+  crtBtn.textContent = root.classList.contains("crt") ? "[CRT ON]" : "[CRT OFF]";
+  crtBtn.setAttribute("aria-pressed", String(root.classList.contains("crt")));
+  crtBtn.addEventListener("click", function () { setCrt(!root.classList.contains("crt"), true); });
+
+  /* ---- who's online: a small, made-up roster that changes every few minutes ---- */
+  var HANDLES = [["SolidSurf", 9600], ["AME_Fan", 2400], ["Pocket_Pete", 14400], ["PVC_Joe", 2400], ["AutoLISPer", 28800], ["Reg_Gen", 9600], ["Sysop", 14400]];
+  var PLACES = ["reading the Source", "in the Gallery", "browsing the Documents", "studying the Architecture", "reading the Context file", "downloading the .SDF files", "in the message base"];
+  window.WHO = function (doing) {
+    var slot = Math.floor(Date.now() / 300000), n = 2 + (slot % 2), used = {}, rows = [];
+    rows.push("Node 1   YOU           14400   " + doing);
+    for (var i = 0; rows.length < n + 1 && i < 20; i++) {
+      var k = (slot * 5 + i * 3) % HANDLES.length;
+      if (used[k]) continue; used[k] = 1;
+      var hd = HANDLES[k], where = PLACES[(slot * 3 + k * 2) % PLACES.length];
+      rows.push("Node " + (rows.length + 1) + "   " + (hd[0] + "            ").slice(0, 12) + "  " + ("     " + hd[1]).slice(-5) + "   " + where);
+    }
+    return rows;
+  };
+
+  /* ---- the command line ---- */
+  var input = $("cmdinput"), disp = $("cmdtext"), log = $("cmdlog"), body = $("cmdlog-body");
+  var hist = [], hpos = 0, hideT = 0;
+  function show() { log.hidden = false; clearTimeout(hideT); hideT = setTimeout(function () { if (document.activeElement !== input) log.hidden = true; }, 30000); }
+  function out(text, cls) {
+    String(text).split("\n").forEach(function (l) {
+      var d = document.createElement("div"); d.textContent = l || "\u00a0"; if (cls) d.className = cls; body.appendChild(d);
+    });
+    while (body.childNodes.length > 200) body.removeChild(body.firstChild);
+    body.scrollTop = body.scrollHeight; show();
+  }
+  var base = (document.querySelector(".logo a") || { href: "/" }).href;
+  var ALIAS = { home: "", index: "", docs: "documents", doc: "documents", reports: "documents", src: "source", code: "source", lisp: "source",
+                arch: "architecture", pics: "gallery", photos: "gallery", vars: "variable", variables: "variable", sole: "gallery" };
+  function find(q) {
+    q = (ALIAS[q] !== undefined ? ALIAS[q] : q).toLowerCase().trim();
+    if (!q) return { t: "Home", u: base };
+    var ix = window.SITEIDX || [], pick = function (fn) { return ix.filter(fn)[0]; };
+    return pick(function (p) { return p.t.toLowerCase() === q; }) ||
+           pick(function (p) { return p.t.toLowerCase().replace(/\.lsp$/, "") === q; }) ||
+           pick(function (p) { return p.t.toLowerCase().indexOf(q) === 0; }) ||
+           pick(function (p) { return p.t.toLowerCase().indexOf(q) > -1 || p.u.toLowerCase().indexOf(q) > -1; });
+  }
+  function go(p) { out("Opening " + p.t + " ..."); setTimeout(function () { location.href = p.u; }, 350); }
+  function onoff(a, cur) { a = (a || "").toLowerCase(); return a === "on" ? true : a === "off" ? false : !cur; }
+  var COMMANDS = {
+    help: function () {
+      out("Commands:\n  OPEN <name>   go to a page (try OPEN SOURCE, OPEN INTERSECT, OPEN GALLERY)\n  DIR           list the pages\n  WHO           who is online\n  ABOUT         what this place is\n  TIME          the time\n  CRT [ON|OFF]  the CRT effect\n  SOUND [ON|OFF]  the modem sound\n  LIGHT / DARK  the screen theme\n  REDIAL        connect again, from the start\n  ZOOM E        scroll to the top\n  CLS           clear this window\n  VER           version\nPress F2 to show or hide this window. ESC clears the line.");
+    },
+    dir: function () {
+      out(" Volume in drive A is SPOUTFINDER\n Directory of A:\\\n");
+      (window.SITEIDX || []).filter(function (p) { return p.d; }).concat((window.SITEIDX || []).filter(function (p) { return !p.d; }).slice(0, 40)).forEach(function (p) {
+        out((p.t.toUpperCase() + "                    ").slice(0, 24) + (p.d ? "<DIR>" : "     "));
+      });
+    },
+    about: function () { out("BCIT ARCHIVES, 1994.\nSpoutFinder: an AutoLISP program for AutoCAD Release 12 that finds where a shoe-sole pouring machine should place its spouts. Type OPEN ABOUT for more."); },
+    who: function () { out("WHO'S ONLINE (simulated)"); window.WHO("typing at the command line").forEach(function (l) { out(l); }); },
+    time: function () {
+      var s = Math.round((Date.now() - t0) / 1000);
+      out("Current time:  " + new Date().toString().slice(0, 24) + "\nTime on line:  " + Math.floor(s / 60) + " min " + (s % 60) + " sec");
+    },
+    crt: function (a) { setCrt(onoff(a[0], root.classList.contains("crt"))); },
+    sound: function (a) { var b = $("snd"), cur = b.textContent.indexOf("ON") > -1, want = onoff(a[0], cur); if (want !== cur) b.click(); else out("Sound is already " + (cur ? "on" : "off") + "."); },
+    light: function () { out("Light screen."); setTheme("light"); },
+    dark: function () { out("Dark screen."); setTheme("dark"); },
+    theme: function (a) { setTheme((a[0] || "").toLowerCase() === "light" ? "light" : (a[0] || "").toLowerCase() === "dark" ? "dark" : (root.dataset.theme === "light" ? "dark" : "light")); },
+    redial: function () { out("ATZ\nOK\nATDT 8822034"); try { sessionStorage.removeItem("connected"); sessionStorage.removeItem("modemPlayed"); } catch (e) {} setTimeout(function () { location.href = base; }, 500); },
+    zoom: function (a) { if ((a[0] || "").toLowerCase().charAt(0) === "e") { scrollTo({ top: 0, behavior: "smooth" }); out("Regenerating model."); } else out("Enter an option [All/Center/Dynamic/Extents/Previous/Scale/Window]: E"); },
+    cls: function () { body.textContent = ""; },
+    ver: function () { out("SpoutFinder archive 1.0 on BCIT node 1\nThe drawing editor is AutoCAD Release 12 (in spirit)."); },
+    exit: function () { out("You can leave any time, but the exhibit stays."); },
+    quit: function () { COMMANDS.exit(); },
+    open: function (a) { var p = find(a.join(" ")); if (p) go(p); else out('No page called "' + a.join(" ") + '". Type DIR for a list.', "err"); }
+  };
+  COMMANDS["?"] = COMMANDS.help; COMMANDS.list = COMMANDS.dir; COMMANDS.snd = COMMANDS.sound; COMMANDS.regen = function () { location.reload(); };
+  function setTheme(t) { root.dataset.theme = t; store("pref-theme", t); }
+  function run(line) {
+    var raw = line.trim(); if (!raw) return;
+    out("Command: " + raw, "echo");
+    hist.push(raw); hpos = hist.length;
+    var w = raw.split(/\s+/), name = w[0].toLowerCase(), args = w.slice(1);
+    if (COMMANDS.hasOwnProperty(name)) COMMANDS[name](args);
+    else { var p = find(raw); if (p && raw.length > 2) go(p); else out('Unknown command "' + w[0].toUpperCase() + '". Type ? for list of commands.', "err"); }
+  }
+  function mirror() { disp.textContent = input.value; }
+  input.addEventListener("input", mirror);
+  input.addEventListener("focus", function () { CMD.lock = true; show(); mirror(); });
+  input.addEventListener("blur", function () { CMD.lock = false; if (!input.value) disp.textContent = ""; });
+  input.addEventListener("keydown", function (e) {
+    if (e.key === "Enter") { e.preventDefault(); var v = input.value; input.value = ""; disp.textContent = ""; run(v); }
+    else if (e.key === "Escape") { if (input.value) { input.value = ""; mirror(); } else { log.hidden = true; input.blur(); } }
+    else if (e.key === "ArrowUp") { e.preventDefault(); if (hpos > 0) input.value = hist[--hpos]; mirror(); }
+    else if (e.key === "ArrowDown") { e.preventDefault(); input.value = hpos < hist.length - 1 ? hist[++hpos] : (hpos = hist.length, ""); mirror(); }
+    e.stopPropagation();
+  });
+  window.addEventListener("keydown", function (e) {
+    if (e.key === "F2") { e.preventDefault(); log.hidden = !log.hidden; return; }
+    if (root.classList.contains("dialup") || e.ctrlKey || e.metaKey || e.altKey || e.key.length !== 1 || e.key === " ") return;
+    var t = e.target, tag = t && t.tagName;
+    if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT" || (t && t.isContentEditable)) return;
+    input.focus();   /* the keystroke lands in the command line, like typing at AutoCAD's Command: prompt */
+  });
+  $("cmdlog").addEventListener("click", function () { input.focus(); });
+  document.querySelector(".cmdline").addEventListener("click", function (e) { if (!e.target.closest("button")) input.focus(); });
 })();
 </script>

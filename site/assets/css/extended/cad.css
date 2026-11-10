@@ -233,3 +233,36 @@ a.bbs-line:hover, a.bbs-line:focus-visible { background: var(--cad-white); color
 .cad-cursor-on.cad-arrow, .cad-cursor-on.cad-arrow * { cursor: default !important; }
 
 html, body { cursor: crosshair; } /* fallback until the custom crosshair starts */
+
+/* ---- CRT mode ---- */
+#crt { position: fixed; inset: 0; z-index: 99998; pointer-events: none; display: none; overflow: hidden;
+  background:
+    repeating-linear-gradient(to bottom, rgba(0,0,0,0) 0, rgba(0,0,0,0) 2px, rgba(0,0,0,.22) 3px, rgba(0,0,0,.22) 4px),
+    radial-gradient(ellipse at center, rgba(0,0,0,0) 58%, rgba(0,0,0,.5) 100%); }
+#crt::before { content: ""; position: absolute; left: 0; right: 0; top: -20%; height: 18%;
+  background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,.045), rgba(255,255,255,0));
+  animation: crtroll 7s linear infinite; }
+#crt::after { content: ""; position: absolute; inset: 0; background: rgba(255,255,255,.03); animation: crtflicker .15s steps(2) infinite; }
+html.crt #crt { display: block; }
+html.crt body { text-shadow: 0 0 3px rgba(120, 255, 220, .28); }
+:root[data-theme="light"].crt #crt { background:
+    repeating-linear-gradient(to bottom, rgba(0,0,0,0) 0, rgba(0,0,0,0) 2px, rgba(0,0,0,.06) 3px, rgba(0,0,0,.06) 4px),
+    radial-gradient(ellipse at center, rgba(0,0,0,0) 65%, rgba(0,0,0,.14) 100%); }
+:root[data-theme="light"].crt body { text-shadow: none; }
+:root[data-theme="light"] #crt::before, :root[data-theme="light"] #crt::after { display: none; }
+@keyframes crtroll { to { top: 110%; } }
+@keyframes crtflicker { 50% { opacity: .35; } }
+@media (prefers-reduced-motion: reduce) { #crt::before, #crt::after { animation: none; } }
+#crtbtn { background: none; border: 0; color: var(--cad-cyan); font: inherit; cursor: pointer; padding: 0; }
+#crtbtn:hover { background: var(--cad-white); color: var(--bg); }
+
+/* ---- command line ---- */
+.cmdline { cursor: text; }
+#cmdinput { position: absolute; left: 0; top: 0; width: 55%; height: 100%; opacity: 0; border: 0; padding: 0; background: transparent; font-size: 16px; }
+.cmd-right { position: relative; z-index: 2; }
+#cmdlog { position: fixed; left: 0; right: 0; bottom: 38px; z-index: 49; max-width: 900px; margin: 0 auto; background: #000; color: #c8c8c8;
+  border: 2px solid #f0f0f0; border-bottom: 0; font-size: 19px; line-height: 1.2; }
+#cmdlog[hidden] { display: none; }
+#cmdlog-body { max-height: 36vh; overflow-y: auto; padding: 6px 12px; white-space: pre-wrap; text-shadow: none; }
+#cmdlog-body .echo { color: #f5e400; }
+#cmdlog-body .err { color: #ff3030; }
