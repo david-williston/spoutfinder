@@ -237,16 +237,16 @@ html, body { cursor: crosshair; } /* fallback until the custom crosshair starts 
 /* ---- CRT mode ---- */
 #crt { position: fixed; inset: 0; z-index: 99998; pointer-events: none; display: none; overflow: hidden;
   background:
-    repeating-linear-gradient(to bottom, rgba(0,0,0,0) 0, rgba(0,0,0,0) 2px, rgba(0,0,0,.22) 3px, rgba(0,0,0,.22) 4px),
-    radial-gradient(ellipse at center, rgba(0,0,0,0) 58%, rgba(0,0,0,.5) 100%); }
+    repeating-linear-gradient(to bottom, rgba(0,0,0,0) 0, rgba(0,0,0,0) 2px, rgba(0,0,0,.09) 3px, rgba(0,0,0,.09) 4px),
+    radial-gradient(ellipse at center, rgba(0,0,0,0) 62%, rgba(0,0,0,.36) 100%); }
 #crt::before { content: ""; position: absolute; left: 0; right: 0; top: -20%; height: 18%;
-  background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,.045), rgba(255,255,255,0));
+  background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,.022), rgba(255,255,255,0));
   animation: crtroll 7s linear infinite; }
-#crt::after { content: ""; position: absolute; inset: 0; background: rgba(255,255,255,.03); animation: crtflicker .15s steps(2) infinite; }
+#crt::after { content: ""; position: absolute; inset: 0; background: rgba(255,255,255,.015); animation: crtflicker .15s steps(2) infinite; }
 html.crt #crt { display: block; }
 html.crt body { text-shadow: 0 0 3px rgba(120, 255, 220, .28); }
 :root[data-theme="light"].crt #crt { background:
-    repeating-linear-gradient(to bottom, rgba(0,0,0,0) 0, rgba(0,0,0,0) 2px, rgba(0,0,0,.06) 3px, rgba(0,0,0,.06) 4px),
+    repeating-linear-gradient(to bottom, rgba(0,0,0,0) 0, rgba(0,0,0,0) 2px, rgba(0,0,0,.035) 3px, rgba(0,0,0,.035) 4px),
     radial-gradient(ellipse at center, rgba(0,0,0,0) 65%, rgba(0,0,0,.14) 100%); }
 :root[data-theme="light"].crt body { text-shadow: none; }
 :root[data-theme="light"] #crt::before, :root[data-theme="light"] #crt::after { display: none; }
