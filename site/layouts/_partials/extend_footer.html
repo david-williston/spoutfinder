@@ -5,9 +5,11 @@
 window.HDD = (function () {
   var SRC = "{{ "audio/hdd.mp3" | relURL }}";
   var AC = window.AudioContext || window.webkitAudioContext, ctx = null, buf = null, loading = false, lastAt = 0;
-  var CLICKS = [[1.40, 0.35], [4.55, 0.30], [6.75, 0.35], [10.35, 0.40], [12.40, 0.35]];
-  var SEEKS = [[2.35, 0.90], [7.70, 0.90], [13.10, 0.90]];
-  var RUNS = [[2.35, 1.9], [7.70, 1.9], [13.00, 1.9]];
+  /* [start, length, level]. The 10.35 s click is left out: it is a broadband burst, noisier than the rest.
+     The seek and retry bursts measure about three times louder than the clicks, so they are pulled down to match. */
+  var CLICKS = [[1.40, 0.35, 1], [4.55, 0.30, 1], [6.75, 0.35, 1], [12.40, 0.35, 1]];
+  var SEEKS = [[2.35, 0.90, 0.34], [7.70, 0.90, 0.34], [13.10, 0.90, 0.34]];
+  var RUNS = [[2.35, 1.9, 0.32], [7.70, 1.9, 0.32], [13.00, 1.9, 0.32]];
   function muted() { try { return localStorage.getItem("modem") === "off"; } catch (e) { return false; } }
   function ensure() {
     if (!AC) return false;
@@ -27,7 +29,7 @@ window.HDD = (function () {
     if (ctx.state !== "running") { ctx.resume().catch(function () {}); if (ctx.state !== "running") return false; }
     lastAt = now;
     var list = kind === "click" ? CLICKS : kind === "run" ? RUNS : SEEKS;
-    var s = list[Math.floor(Math.random() * list.length)], d = s[1], t = ctx.currentTime + 0.01, v = (gain || 1) * 0.07;
+    var s = list[Math.floor(Math.random() * list.length)], d = s[1], t = ctx.currentTime + 0.01, v = (gain || 1) * s[2] * 0.07;
     var src = ctx.createBufferSource(), g = ctx.createGain();
     src.buffer = buf;
     g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(v, t + 0.012);
