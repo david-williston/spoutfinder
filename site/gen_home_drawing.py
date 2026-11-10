@@ -145,7 +145,10 @@ html = '''<article class="first-entry home-info">
         <h1>{{ site.Params.homeInfoParams.Title | markdownify }}</h1>
     </header>
     <figure class="cad-screen">
+        <div class="cad-view">
 ''' + "\n".join(o) + '''
+        <a class="cad-demo" href="{{ "run/" | relURL }}" aria-label="See the demo: run the spout finder on this sole">&#9654; SEE DEMO</a>
+        </div>
         <figcaption>The prototype sole, traced from a photograph: each colored region is a mold pocket, and every green circle is a spout that fits entirely inside it. Dashed red ones were rejected. Redrawn after the program's method.</figcaption>
     </figure>
     <div class="entry-content md-content">

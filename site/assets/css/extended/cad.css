@@ -285,3 +285,13 @@ html.crt body { text-shadow: 0 0 3px rgba(120, 255, 220, .28); }
 .rn-sdf { color: var(--secondary); max-height: 340px; }
 .rn-sdf .z { color: #555; }
 @media (max-width: 600px) { .rn-panels { grid-template-columns: 1fr; } }
+
+/* "See demo" button on the home drawing, bottom right of the drawing area */
+.cad-view { position: relative; }
+.cad-demo { position: absolute; right: 12px; bottom: 12px; padding: 2px 14px; background: #000; color: var(--cad-yellow);
+  border: 2px solid var(--cad-yellow); text-decoration: none; text-transform: uppercase; letter-spacing: 1px; font-size: 22px; line-height: 1.2;
+  animation: demopulse 2.4s ease-in-out infinite; }
+.cad-demo:hover, .cad-demo:focus-visible { background: var(--cad-yellow); color: #000; outline: none; animation: none; }
+@keyframes demopulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(245, 228, 0, .0); } 50% { box-shadow: 0 0 10px 1px rgba(245, 228, 0, .55); } }
+@media (prefers-reduced-motion: reduce) { .cad-demo { animation: none; } }
+@media (max-width: 600px) { .cad-demo { font-size: 17px; right: 6px; bottom: 6px; padding: 0 8px; } }

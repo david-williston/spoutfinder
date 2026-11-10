@@ -3,6 +3,7 @@
         <h1>{{ site.Params.homeInfoParams.Title | markdownify }}</h1>
     </header>
     <figure class="cad-screen">
+        <div class="cad-view">
 <svg viewBox="0 0 820 480" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="The prototype sole drawn in the style of AutoCAD: each colored region is a mold pocket outlined on its own layer and filled with a grid of pouring spouts, valid positions circled in green">
 <rect width="820" height="480" fill="#000"/>
 <rect x="20" y="20" width="1" height="1" fill="#303030"/>
@@ -1116,6 +1117,8 @@
 <path d="M14 434l-4 8M14 434l4 8M50 470l-8-4M50 470l-8 4" stroke="#f0f0f0"/>
 <text x="54" y="466" fill="#f0f0f0" font-size="15">X</text><text x="19" y="440" fill="#f0f0f0" font-size="15">Y</text>
 </svg>
+        <a class="cad-demo" href="{{ "run/" | relURL }}" aria-label="See the demo: run the spout finder on this sole">&#9654; SEE DEMO</a>
+        </div>
         <figcaption>The prototype sole, traced from a photograph: each colored region is a mold pocket, and every green circle is a spout that fits entirely inside it. Dashed red ones were rejected. Redrawn after the program's method.</figcaption>
     </figure>
     <div class="entry-content md-content">
