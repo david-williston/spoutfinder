@@ -3,6 +3,11 @@
   <span class="cmd-right"><button type="button" id="snd" aria-pressed="true" title="Toggle the modem sound">[SND ON]</button><span class="coords" id="coords" aria-hidden="true">X: 0000.0000  Y: 0000.0000  Z: 0.0000</span></span>
 </div>
 <script>
+  window.GATE = (function () {
+    var open, p = new Promise(function (r) { open = r; });
+    if (!document.documentElement.classList.contains("dialup")) open();
+    return { p: p, open: open };
+  })();
   window.CMD = { lock: false, el: document.getElementById("cmdtext"),
     set: function (t, modem) { if (this.el && (modem || !this.lock)) this.el.textContent = t; } };
 </script>
@@ -17,7 +22,7 @@
   })();
 </script>
 <script>
-(function () {
+GATE.p.then(function () {
   var root = document.documentElement;
   if (!root.classList.contains("x486")) return;
   var main = document.querySelector("main.main");
@@ -63,6 +68,183 @@
   ["keydown", "mousedown", "touchstart"].forEach(function (ev) {
     window.addEventListener(ev, skip, { once: true, passive: true });
   });
+});
+</script>
+
+<div id="dialup" role="dialog" aria-modal="true" aria-labelledby="dup-title">
+  <div class="dup-box">
+    <div class="dup-title" id="dup-title">DIAL-UP NETWORKING</div>
+    <svg class="dup-modem" viewBox="0 0 540 250" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="An external 14400 data/fax modem with its row of indicator lights and a telephone cable running to a wall jack">
+      <g fill="none" stroke="#f0f0f0" stroke-width="1.6" stroke-linejoin="round">
+        <polygon points="40,70 70,48 450,48 420,70"/>
+        <polygon points="420,70 450,48 450,168 420,190"/>
+        <rect x="40" y="70" width="380" height="120" rx="5"/>
+      </g>
+      <g stroke="#3a3a3a" stroke-width="1.4">
+        <path d="M90 56h330M98 60h330M106 64h330"/>
+      </g>
+      <text x="62" y="102" fill="#00e5e5" font-size="22" font-family="VT323, monospace">14400  DATA/FAX  MODEM</text>
+      <g font-family="VT323, monospace" font-size="15" fill="#c8c8c8" text-anchor="middle">
+        <text x="75" y="136">HS</text><text x="117" y="136">AA</text><text x="159" y="136">CD</text><text x="201" y="136">OH</text>
+        <text x="243" y="136">RD</text><text x="285" y="136">SD</text><text x="327" y="136">TR</text><text x="369" y="136">MR</text>
+      </g>
+      <g stroke-width="1.5" class="leds">
+        <circle id="led-HS" class="led" cx="75" cy="152" r="7"/><circle id="led-AA" class="led" cx="117" cy="152" r="7"/>
+        <circle id="led-CD" class="led" cx="159" cy="152" r="7"/><circle id="led-OH" class="led" cx="201" cy="152" r="7"/>
+        <circle id="led-RD" class="led" cx="243" cy="152" r="7"/><circle id="led-SD" class="led" cx="285" cy="152" r="7"/>
+        <circle id="led-TR" class="led" cx="327" cy="152" r="7"/><circle id="led-MR" class="led" cx="369" cy="152" r="7"/>
+      </g>
+      <g fill="none" stroke="#f5e400" stroke-width="1.6">
+        <path d="M450 118 C 480 118, 470 200, 500 200"/>
+        <rect x="494" y="188" width="34" height="26"/><rect x="503" y="196" width="16" height="10"/>
+      </g>
+      <text x="511" y="232" fill="#f5e400" font-size="14" font-family="VT323, monospace" text-anchor="middle">RJ-11</text>
+    </svg>
+    <dl class="dup-fields">
+      <dt>Phone number</dt><dd>1-236-882-2034</dd>
+      <dt>Speed</dt><dd>14400 bps</dd>
+      <dt>Status</dt><dd id="dup-status" aria-live="polite">Ready</dd>
+    </dl>
+    <div class="dup-bar" aria-hidden="true"><span id="dup-fill"></span></div>
+    <div class="dup-buttons">
+      <button type="button" id="dup-go">CONNECT</button>
+      <button type="button" id="dup-quiet">CONNECT (NO SOUND)</button>
+      <button type="button" id="dup-skip">SKIP</button>
+    </div>
+  </div>
+  <div id="bbs" hidden aria-live="polite">
+    <div id="bbs-screen"></div>
+  </div>
+</div>
+<script>
+(function () {
+  var root = document.documentElement, box = document.getElementById("dialup");
+  if (!root.classList.contains("dialup")) return;
+  var go = document.getElementById("dup-go"), quiet = document.getElementById("dup-quiet"), skip = document.getElementById("dup-skip");
+  var status = document.getElementById("dup-status"), fill = document.getElementById("dup-fill");
+  var leds = {}; ["HS", "AA", "CD", "OH", "RD", "SD", "TR", "MR"].forEach(function (n) { leds[n] = document.getElementById("led-" + n); });
+  var timers = [], flick = null, finished = false;
+  var on = function (n, v) { leds[n].classList.toggle("on", v !== false); };
+  var T = { init: 0, tone: 450, dial: 2050, ring: 4400, carrier: 7500, nego: 9100, hs: 12600, up: 15300, close: 16900 };
+  var AUDIO_LAG = 450;   /* the sound starts a moment after the click */
+
+  function at(ms, fn) { timers.push(setTimeout(fn, ms)); }
+  function flicker(names, rate) {
+    clearInterval(flick);
+    flick = names.length ? setInterval(function () { names.forEach(function (n) { on(n, Math.random() < 0.55); }); }, rate || 90) : null;
+  }
+  function close() {
+    if (finished) return; finished = true;
+    timers.forEach(clearTimeout); clearInterval(flick);
+    try { sessionStorage.setItem("connected", "1"); } catch (e) {}
+    box.classList.add("closing");
+    setTimeout(function () { root.classList.remove("dialup"); GATE.open(); }, 450);
+  }
+  function dial(withSound) {
+    go.disabled = quiet.disabled = true; skip.textContent = "CANCEL";
+    if (withSound && window.MODEM) MODEM.play();
+    var lag = withSound ? AUDIO_LAG : 0;
+    on("MR"); on("TR");
+    status.textContent = "Initializing modem... OK";
+    fill.style.transition = "width " + (T.up + lag) / 1000 + "s steps(40, end)"; fill.style.width = "100%";
+    at(T.tone + lag, function () { on("OH"); status.textContent = "Waiting for dial tone..."; });
+    at(T.dial + lag, function () { status.textContent = "Dialing 1-236-882-2034"; flicker(["SD"], 150); });
+    at(T.ring + lag, function () { flicker([]); on("SD", false); status.textContent = "Ringing..."; });
+    at(T.carrier + lag, function () { status.textContent = "Carrier detected"; on("AA"); });
+    at(T.nego + lag, function () { status.textContent = "Negotiating protocol..."; flicker(["SD", "RD"], 70); });
+    at(T.hs + lag, function () { on("HS"); });
+    at(T.up + lag, function () { flicker([]); on("SD", false); on("RD", false); on("CD"); status.textContent = "Connected at 14400 bps"; });
+    at(T.up + lag + 1100, bbs);
+  }
+
+  /* ---- the board: a text-mode welcome screen, typed out line by line ---- */
+  function bbs() {
+    if (finished) return;
+    clearInterval(flick);
+    box.querySelector(".dup-box").style.display = "none";
+    var wrap = document.getElementById("bbs"), scr = document.getElementById("bbs-screen");
+    wrap.hidden = false; box.classList.add("bbs-on");
+    var menu = {};
+    Array.prototype.forEach.call(document.querySelectorAll("#menu a"), function (a) { menu[a.textContent.trim().toLowerCase()] = a.getAttribute("href"); });
+    var items = [["A", "About this archive", "about"], ["D", "Documents: proposal and reports", "documents"],
+                 ["C", "Context: computing in 1994", "context"], ["G", "Gallery: the prototype and graduation", "gallery"],
+                 ["S", "Source code: the AutoLISP listing", "source"], ["X", "Architecture: how it works", "architecture"]];
+    var L = [
+      { t: "CONNECT 14400/ARQ/V42BIS", c: "dim" },
+      { t: "" },
+      { t: "+--------------------------------------------+", c: "box" },
+      { t: "|   B C I T   A R C H I V E S    B B S        |", c: "box" },
+      { t: "|   SPOUTFINDER NODE   1 / 1   14400 bps      |", c: "box" },
+      { t: "+--------------------------------------------+", c: "box" },
+      { t: "" },
+      { t: "WELCOME TO THE BCIT ARCHIVES.", c: "big" },
+      { t: "FROM 1994.", c: "big" },
+      { t: "" },
+      { t: "In 1994 a Mechanical CAD/CAM student at the British Columbia" },
+      { t: "Institute of Technology wrote SpoutFinder: an AutoLISP program" },
+      { t: "for AutoCAD Release 12 that works out where a shoe-sole pouring" },
+      { t: "machine should put its spouts." },
+      { t: "" },
+      { t: "This board keeps the whole project: the proposal, the reports," },
+      { t: "the code, and photographs from the day it ended. It comes from" },
+      { t: "a time when computers were slow and expensive, and the word" },
+      { t: "\"printing\" meant ink on paper." },
+      { t: "" },
+      { t: "---------------- MAIN MENU ----------------", c: "dim" }
+    ];
+    items.forEach(function (it) { L.push({ key: it[0], label: it[1], href: menu[it[2]] }); });
+    L.push({ key: "ENTER", label: "Enter the archive", href: "" });
+    L.push({ t: "" });
+    L.push({ t: "Your choice? ", c: "prompt" });
+
+    var i = 0, fast = false, ready = false;
+    function line(spec) {
+      var el = spec.key ? document.createElement("a") : document.createElement("div");
+      el.className = "bbs-line " + (spec.c || "");
+      if (spec.key) { el.href = spec.href || "#"; el.dataset.key = spec.key; }
+      scr.appendChild(el);
+      var text = spec.key ? "[" + spec.key + "]  " + spec.label : spec.t;
+      return { el: el, text: text };
+    }
+    function typeLine(spec, done) {
+      var ln = line(spec), n = 0;
+      if (!ln.text) { ln.el.innerHTML = "&nbsp;"; return done(); }
+      (function tick() {
+        n = fast ? ln.text.length : Math.min(ln.text.length, n + 4);
+        ln.el.textContent = ln.text.slice(0, n);
+        if (n < ln.text.length) setTimeout(tick, 14); else done();
+      })();
+    }
+    function nextLine() {
+      if (i >= L.length) { ready = true; scr.lastChild.insertAdjacentHTML("beforeend", '<span class="bbs-cursor"></span>'); return; }
+      typeLine(L[i++], function () { setTimeout(nextLine, fast ? 0 : 55); });
+    }
+    function choose(key, href) {
+      if (!ready && key !== "skip") return;
+      try { sessionStorage.setItem("connected", "1"); } catch (e) {}
+      if (href && href !== "#") { location.href = href; return; }
+      close();
+    }
+    scr.addEventListener("click", function (e) {
+      var a = e.target.closest("a"); if (!a) return;
+      e.preventDefault(); choose(a.dataset.key, a.getAttribute("href"));
+    });
+    window.addEventListener("keydown", function (e) {
+      if (finished || wrap.hidden) return;
+      if (!ready) { fast = true; return; }
+      var k = e.key.length === 1 ? e.key.toUpperCase() : e.key;
+      if (k === "Enter" || k === "Escape") return choose("ENTER", "");
+      var hit = items.filter(function (it) { return it[0] === k; })[0];
+      if (hit && menu[hit[2]]) choose(hit[0], menu[hit[2]]);
+    });
+    nextLine();
+  }
+  go.addEventListener("click", function () { dial(true); });
+  quiet.addEventListener("click", function () { dial(false); });
+  skip.addEventListener("click", function () { if (window.MODEM) MODEM.stop(); close(); });
+  window.addEventListener("keydown", function (e) { if (e.key === "Escape" && document.getElementById("bbs").hidden) skip.click(); });
+  if (window.MODEM && MODEM.muted()) quiet.style.display = "none";
+  go.focus();
 })();
 </script>
 
@@ -179,6 +361,6 @@
     ["pointerdown", "keydown", "touchstart"].forEach(function (e) { window.addEventListener(e, go, { once: true }); });
     setTimeout(function () { if (ctx && ctx.state === "running") start(); }, 400);
   }
-  call();
+  window.MODEM = { stop: function () { stop(); }, play: function () { if (!muted) { sess("modemPlayed", null); call(); } }, muted: function () { return muted; } };
 })();
 </script>

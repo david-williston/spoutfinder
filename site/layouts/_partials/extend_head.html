@@ -6,3 +6,7 @@
   if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) document.documentElement.classList.add("x486");
 </script>
 <noscript><style>.x486 .main > * { visibility: visible !important; }</style></noscript>
+<script>
+  /* first visit of a session: the dial-up screen covers the page until it is connected */
+  try { if (!sessionStorage.getItem("connected") && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) document.documentElement.classList.add("dialup"); } catch (e) {}
+</script>
