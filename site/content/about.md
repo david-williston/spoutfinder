@@ -51,3 +51,11 @@ machine to read.
 Pages 1 to 18 of the program listing, which include the `GO` command that
 started it all, have not been transcribed. For now the code is a fragment: it
 can be read and studied, but not loaded and run.
+
+## Credits
+
+The modem you hear when you connect is a real recording: "Dial up connection"
+by ezwa, from [PDSounds](https://pdsounds.org/) (record 116), released into the
+public domain and hosted on
+[Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Dial_up_connection.ogg).
+This copy is trimmed to 32 seconds with a fade-out.

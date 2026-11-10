@@ -125,8 +125,8 @@ GATE.p.then(function () {
   var leds = {}; ["HS", "AA", "CD", "OH", "RD", "SD", "TR", "MR"].forEach(function (n) { leds[n] = document.getElementById("led-" + n); });
   var timers = [], flick = null, finished = false;
   var on = function (n, v) { leds[n].classList.toggle("on", v !== false); };
-  var T = { init: 0, tone: 450, dial: 1550, ring: 3050, carrier: 5650, nego: 8550, hs: 12500, up: 15500 };
-  var AUDIO_LAG = 450;   /* the sound starts a moment after the click */
+  var T = { init: 0, tone: 900, dial: 2300, ring: 3800, carrier: 13600, nego: 16900, hs: 21500, up: 31500 };
+  var AUDIO_LAG = 300;   /* the sound starts a moment after the click */
 
   function at(ms, fn) { timers.push(setTimeout(fn, ms)); }
   function flicker(names, rate) {
@@ -249,8 +249,7 @@ GATE.p.then(function () {
 </script>
 
 <script>
-/* Modem sound on the first visit of a session: dial tone, DTMF dialling, ringback, answer tone, handshake.
-   All synthesised with Web Audio (no samples). Browsers keep audio locked until the first click or key,
+/* Modem sound on the first visit of a session: a real recording of a dial-up call (see below). Browsers keep audio locked until the first click or key,
    so if it is still locked the call is placed on that first interaction. */
 (function () {
   var btn = document.getElementById("snd");
@@ -274,97 +273,40 @@ GATE.p.then(function () {
     if (muted) stop(); else { sess("modemPlayed", null); call(); }
   });
 
-  var DTMF = { "1": [697, 1209], "2": [697, 1336], "3": [697, 1477], "4": [770, 1209], "5": [770, 1336],
-               "6": [770, 1477], "7": [852, 1209], "8": [852, 1336], "9": [852, 1477], "0": [941, 1336] };
-
-  function tone(freqs, t, dur, gain) {
-    freqs.forEach(function (f) {
-      var o = ctx.createOscillator(), g = ctx.createGain();
-      o.frequency.value = f; g.gain.setValueAtTime(0, t);
-      g.gain.linearRampToValueAtTime(gain, t + 0.008); g.gain.setValueAtTime(gain, t + dur - 0.008); g.gain.linearRampToValueAtTime(0, t + dur);
-      o.connect(g); g.connect(master); o.start(t); o.stop(t + dur + 0.02);
+  /* A real recording, not a synthesis: "Dial up connection" by ezwa, from PDSounds (record 116),
+     public domain, via Wikimedia Commons. Trimmed to 32 s with a fade-out. Fetched and decoded ahead
+     of time so it can start the instant CONNECT is clicked. */
+  var SRC = "{{ "audio/dial-up-connection.mp3" | relURL }}", bufP = null;
+  function load() {
+    if (bufP) return bufP;
+    ctx = ctx || new AC();
+    bufP = fetch(SRC).then(function (r) { return r.arrayBuffer(); }).then(function (ab) {
+      return new Promise(function (ok, bad) { ctx.decodeAudioData(ab, ok, bad); });
     });
+    bufP.catch(function () { bufP = null; });
+    return bufP;
   }
-  function noiseSource() {
-    var len = ctx.sampleRate * 2, b = ctx.createBuffer(1, len, ctx.sampleRate), d = b.getChannelData(0);
-    for (var i = 0; i < len; i++) d[i] = Math.random() * 2 - 1;
-    var s = ctx.createBufferSource(); s.buffer = b; s.loop = true; return s;
-  }
+  if (AC && !muted && document.documentElement.classList.contains("dialup")) load();
 
-  function schedule() {
-    var t0 = ctx.currentTime + 0.15;
-    master = ctx.createGain(); master.gain.value = 0.22;
-    var lp = ctx.createBiquadFilter(); lp.type = "lowpass"; lp.frequency.value = 3400;
-    var hp = ctx.createBiquadFilter(); hp.type = "highpass"; hp.frequency.value = 300;
-    master.connect(hp); hp.connect(lp); lp.connect(ctx.destination);
-    var noise = function (from, dur, bandHz, q, level, jitter) {
-      var ns = noiseSource(), bp = ctx.createBiquadFilter(), ng = ctx.createGain();
-      bp.type = "bandpass"; bp.Q.value = q; bp.frequency.setValueAtTime(bandHz, from);
-      if (jitter) for (var y = 0; y < dur; y += 0.12) bp.frequency.setValueAtTime(bandHz + (Math.random() - 0.5) * jitter, from + y);
-      ng.gain.setValueAtTime(0, from); ng.gain.linearRampToValueAtTime(level, from + Math.min(0.3, dur / 3));
-      ng.gain.setValueAtTime(level, from + dur - Math.min(0.4, dur / 3)); ng.gain.linearRampToValueAtTime(0, from + dur);
-      ns.connect(bp); bp.connect(ng); ng.connect(master); ns.start(from); ns.stop(from + dur + 0.05);
-    };
-
-    /* 1. dial tone: 350 + 440 Hz */
-    tone([350, 440], t0 + 0.05, 1.25, 0.5);
-    /* 2. dialling: the last seven digits (882-2034), quick DTMF */
-    var t = t0 + 1.4;
-    "8822034".split("").forEach(function (d) { tone(DTMF[d], t, 0.09, 0.45); t += 0.15; });
-    /* 3. one ring (ringback 440 + 480 Hz); the touch tones are over by now */
-    var ring = t0 + 2.9;
-    tone([440, 480], ring, 2.0, 0.35);
-    /* 4. pickup click */
-    var pick = ring + 2.3;
-    noise(pick, 0.03, 1800, 0.6, 0.6); tone([140], pick, 0.04, 0.4);
-    /* 5. answer tone: 2100 Hz, 15 Hz warble, little phase-reversal blips every 450 ms */
-    var ans = t0 + 5.5, ansLen = 2.4;
-    var ao = ctx.createOscillator(), ag = ctx.createGain(), lfo = ctx.createOscillator(), lg = ctx.createGain();
-    ao.frequency.value = 2100; ag.gain.setValueAtTime(0, ans); ag.gain.linearRampToValueAtTime(0.4, ans + 0.02);
-    for (var k = 1; k * 0.45 < ansLen; k++) { ag.gain.setValueAtTime(0.4, ans + k * 0.45 - 0.004); ag.gain.linearRampToValueAtTime(0.05, ans + k * 0.45); ag.gain.linearRampToValueAtTime(0.4, ans + k * 0.45 + 0.004); }
-    ag.gain.setValueAtTime(0.4, ans + ansLen - 0.02); ag.gain.linearRampToValueAtTime(0, ans + ansLen);
-    lfo.frequency.value = 15; lg.gain.value = 0.12; lfo.connect(lg); lg.connect(ag.gain);
-    ao.connect(ag); ag.connect(master); ao.start(ans); ao.stop(ans + ansLen + 0.05); lfo.start(ans); lfo.stop(ans + ansLen + 0.05);
-    /* 6. the two modems compare notes: alternating two-tone bursts */
-    var hs = t0 + 8.4; t = hs;
-    for (var i = 0; i < 6; i++) { tone(i % 2 ? [1529, 2225] : [1375, 2002], t, 0.12, 0.38); t += 0.15; }
-    t += 0.2;
-    /* 7. buzzy FSK burst */
-    var fo = ctx.createOscillator(), fg = ctx.createGain();
-    fg.gain.setValueAtTime(0, t); fg.gain.linearRampToValueAtTime(0.35, t + 0.02); fg.gain.setValueAtTime(0.35, t + 0.55); fg.gain.linearRampToValueAtTime(0, t + 0.6);
-    for (var h = 0; h < 0.6; h += 0.012) fo.frequency.setValueAtTime(Math.random() < 0.5 ? 1200 : 2400, t + h);
-    fo.connect(fg); fg.connect(master); fo.start(t); fo.stop(t + 0.65);
-    t += 0.75;
-    /* 8. line probing: a ladder of tones up, then down */
-    var steps = [400, 650, 900, 1150, 1400, 1650, 1900, 2150, 2400, 2650, 2900, 3150];
-    steps.forEach(function (f) { tone([f, f * 2 > 3400 ? f : f * 2], t, 0.05, 0.3); t += 0.05; });
-    steps.slice().reverse().forEach(function (f) { tone([f, f * 2 > 3400 ? f : f * 2], t, 0.05, 0.3); t += 0.05; });
-    t += 0.1;
-    /* 9. training: broadband hiss with a fast warble, rising then settling */
-    var span = 3.6, train = t;
-    noise(train, span, 1800, 0.5, 0.55, 1400);
-    var wo = ctx.createOscillator(), wg = ctx.createGain(), wset = [1600, 1800, 2000, 2200, 2400, 1700, 2100];
-    wg.gain.setValueAtTime(0, train); wg.gain.linearRampToValueAtTime(0.16, train + 0.5);
-    wg.gain.setValueAtTime(0.16, train + span - 0.8); wg.gain.linearRampToValueAtTime(0, train + span);
-    for (var w = 0; w < span; w += 0.02) wo.frequency.setValueAtTime(wset[Math.floor(Math.random() * wset.length)], train + w);
-    wo.connect(wg); wg.connect(master); wo.start(train); wo.stop(train + span + 0.05);
-    var end = train + span;
-
-    /* the command line follows along */
-    var say = function (when, text) { timers.push(setTimeout(function () { CMD.set(text, true); }, (when - ctx.currentTime) * 1000)); };
+  function schedule(buf) {
+    var t0 = ctx.currentTime + 0.05;
+    master = ctx.createGain(); master.gain.value = 0.9; master.connect(ctx.destination);
+    var src = ctx.createBufferSource(); src.buffer = buf; src.connect(master); src.start(t0);
+    var T = { dial: 0.9, ring: 3.8, carrier: 13.6, nego: 16.9, end: 31.5 };
+    var say = function (when, text) { timers.push(setTimeout(function () { CMD.set(text, true); }, when * 1000)); };
     CMD.lock = true;
-    say(t0, "ATDT 8822034");
-    say(ring, "ATDT 8822034  RINGING");
-    say(ans, "CARRIER DETECTED");
-    say(hs, "NEGOTIATING...");
-    say(end, "CONNECT 14400");
-    timers.push(setTimeout(function () { CMD.lock = false; CMD.set("", true); playing = false; }, (end - ctx.currentTime + 2.5) * 1000));
+    say(0, "ATDT 8822034");
+    say(T.ring, "ATDT 8822034  RINGING");
+    say(T.carrier, "CARRIER DETECTED");
+    say(T.nego, "NEGOTIATING...");
+    say(T.end, "CONNECT 14400");
+    timers.push(setTimeout(function () { CMD.lock = false; CMD.set("", true); playing = false; }, (T.end + 2.5) * 1000));
   }
 
   function start() {
     if (playing || muted) return;
     playing = true; sess("modemPlayed", "1");
-    schedule();
+    load().then(function (buf) { if (playing && ctx) schedule(buf); }).catch(function () { playing = false; });
   }
   function call() {
     if (muted || !AC || sess("modemPlayed")) return;
