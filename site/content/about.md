@@ -42,6 +42,7 @@ machine to read.
 
 - [Context](../context/): what computing looked like in 1994
 - [Documents](../docs/): the proposal, progress report, final report and variable listing
+- [Gallery](../gallery/): a prototype sole and photographs from graduation
 - [Source](../source/): the AutoLISP listing, pages 19 to 26 of the original
 - [Architecture](../architecture/): how the functions fit together, drawn today
 

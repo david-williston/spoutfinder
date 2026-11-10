@@ -38,6 +38,9 @@ menu:
     - name: Context
       url: /context/
       weight: 25
+    - name: Gallery
+      url: /gallery/
+      weight: 28
     - name: Source
       url: /source/
       weight: 30

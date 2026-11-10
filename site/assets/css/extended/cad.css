@@ -130,3 +130,7 @@ h4 { color: var(--cad-magenta); }
     .cmdline .coords { display: none; }
 }
 @media (prefers-reduced-motion: reduce) { .cmdline .cursor { animation: none; } }
+
+/* photographs: framed like plotted drawings */
+.post-content img { border: 1px solid var(--cad-white); padding: 4px; background: #000; display: block; margin: 12px 0; max-width: 100%; height: auto; }
+.post-content img[alt*="prototype" i], .post-content img[alt*="printed photograph" i] { max-height: 80vh; width: auto; }
