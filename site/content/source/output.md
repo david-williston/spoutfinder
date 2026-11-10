@@ -1,6 +1,7 @@
 ---
 title: "output.lsp"
 weight: 40
+hiddenInHomeList: true
 summary: "write the combined location list to the .sdf data file"
 ---
 

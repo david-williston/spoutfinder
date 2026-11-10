@@ -1,6 +1,7 @@
 ---
 title: "locations.lsp"
 weight: 30
+hiddenInHomeList: true
 summary: "spout grid stepping and the pouring-location lists"
 ---
 

@@ -1,6 +1,7 @@
 ---
 title: "session.lsp"
 weight: 60
+hiddenInHomeList: true
 summary: "environment restore, error handling and default values"
 ---
 

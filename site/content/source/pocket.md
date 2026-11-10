@@ -1,6 +1,7 @@
 ---
 title: "pocket.lsp"
 weight: 50
+hiddenInHomeList: true
 summary: "pocket geometry: surface region, volume, bounding-box test"
 ---
 

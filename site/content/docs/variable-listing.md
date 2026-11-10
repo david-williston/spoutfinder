@@ -1,7 +1,6 @@
 ---
 title: "Variable Listing"
 weight: 40
-hiddenInHomeList: true
 summary: "Every variable in the program, with type and scope"
 ---
 

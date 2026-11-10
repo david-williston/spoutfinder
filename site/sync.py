@@ -33,7 +33,7 @@ for i, (src, title, summary) in enumerate([
 ], 1):
     body = (repo / "docs" / src).read_text()
     body = re.sub(r"\A# .*\n+", "", body)
-    page(docs / src.split("-", 1)[1], title, body, i * 10, summary, hide_home=src.startswith("04"))
+    page(docs / src.split("-", 1)[1], title, body, i * 10, summary)
 
 # ---- source --------------------------------------------------------------
 source = content / "source"
@@ -54,10 +54,10 @@ for i, f in enumerate(sorted((repo / "src").glob("*.lsp")), 1):
     title = f.name
     summary = first.split("--", 1)[-1].strip()
     body = f"{intro}\n\n```lisp\n{text[len(header):].lstrip()}```\n"
-    page(source / (f.stem + ".md"), title, body, i * 10, summary)
+    page(source / (f.stem + ".md"), title, body, i * 10, summary, hide_home=True)
 
 # the variable listing is page 27 of the program listing, so it lives with the source
 vl = (repo / "docs" / "04-variable-listing.md").read_text()
 vl = re.sub(r"\A# .*\n+", "", vl)
-page(source / "variable-listing.md", "Variable Listing", vl, 100, "Every variable in the program, with type and scope")
+page(source / "variable-listing.md", "Variable Listing", vl, 100, "Every variable in the program, with type and scope", hide_home=True)
 print("synced")

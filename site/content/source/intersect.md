@@ -1,6 +1,7 @@
 ---
 title: "intersect.lsp"
 weight: 20
+hiddenInHomeList: true
 summary: "spout/pocket intersection and validity test"
 ---
 

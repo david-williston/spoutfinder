@@ -1,6 +1,7 @@
 ---
 title: "getparams.lsp"
 weight: 10
+hiddenInHomeList: true
 summary: "user prompts for the pouring parameters"
 ---
 
