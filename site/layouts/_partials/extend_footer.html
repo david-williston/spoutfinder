@@ -1,3 +1,52 @@
+<script>
+/* Hard-drive sounds: short clicks and seek bursts cut from a real recording of an old Western Digital drive
+   ("WD102AA Scratched area read retries" by AlepouTheFox, CC0, Wikimedia Commons). They follow the same
+   mute switch as the modem. Browsers keep audio locked until the first click or key; until then these stay quiet. */
+window.HDD = (function () {
+  var SRC = "{{ "audio/hdd.mp3" | relURL }}";
+  var AC = window.AudioContext || window.webkitAudioContext, ctx = null, buf = null, loading = false, lastAt = 0;
+  var CLICKS = [[1.40, 0.35], [4.55, 0.30], [6.75, 0.35], [10.35, 0.40], [12.40, 0.35]];
+  var SEEKS = [[2.35, 0.90], [7.70, 0.90], [13.10, 0.90]];
+  var RUNS = [[2.35, 1.9], [7.70, 1.9], [13.00, 1.9]];
+  function muted() { try { return localStorage.getItem("modem") === "off"; } catch (e) { return false; } }
+  function ensure() {
+    if (!AC) return false;
+    if (!ctx) { try { ctx = new AC(); } catch (e) { return false; } }
+    if (!buf && !loading) {
+      loading = true;
+      fetch(SRC).then(function (r) { return r.arrayBuffer(); })
+        .then(function (ab) { return new Promise(function (ok, bad) { ctx.decodeAudioData(ab, ok, bad); }); })
+        .then(function (b) { buf = b; }).catch(function () { loading = false; });
+    }
+    return true;
+  }
+  function play(kind, gain) {
+    if (muted() || document.documentElement.classList.contains("dialup")) return false;
+    var now = performance.now(); if (now - lastAt < 90) return false;
+    if (!ensure() || !buf) return false;
+    if (ctx.state !== "running") { ctx.resume().catch(function () {}); if (ctx.state !== "running") return false; }
+    lastAt = now;
+    var list = kind === "click" ? CLICKS : kind === "run" ? RUNS : SEEKS;
+    var s = list[Math.floor(Math.random() * list.length)], d = s[1], t = ctx.currentTime + 0.01, v = (gain || 1) * 0.07;
+    var src = ctx.createBufferSource(), g = ctx.createGain();
+    src.buffer = buf;
+    g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(v, t + 0.012);
+    g.gain.setValueAtTime(v, t + d - 0.03); g.gain.linearRampToValueAtTime(0, t + d);
+    src.connect(g); g.connect(ctx.destination); src.start(t, s[0], d);
+    return true;
+  }
+  ensure();
+  /* following a link: the drive seeks, then the page changes */
+  document.addEventListener("click", function (e) {
+    var a = e.target.closest && e.target.closest("a[href]");
+    if (!a || e.defaultPrevented || e.button !== 0 || e.ctrlKey || e.metaKey || e.shiftKey || e.altKey) return;
+    if (a.target === "_blank" || a.hasAttribute("download") || a.origin !== location.origin) return;
+    if (a.pathname === location.pathname && a.search === location.search) return;
+    if (play("seek", 1)) { e.preventDefault(); var url = a.href; setTimeout(function () { location.href = url; }, 280); }
+  }, true);
+  return { play: play };
+})();
+</script>
 <div id="cmdlog" hidden role="log" aria-live="polite"><div id="cmdlog-body"></div></div>
 <div class="cmdline">
   <span aria-hidden="true">Command: <span id="cmdtext"></span><span class="cursor"></span></span>
@@ -51,6 +100,7 @@ GATE.p.then(function () {
   var k = total > MAX_TOTAL ? MAX_TOTAL / total : 1;
 
   CMD.set("REGEN");
+  HDD.play("run", 1);
   var t = 120, last = null;
   plan.forEach(function (b) {
     var d = b.ms * k;
@@ -58,6 +108,7 @@ GATE.p.then(function () {
       [{ clipPath: "inset(0 0 100% 0)" }, { clipPath: "inset(0 0 0% 0)" }],
       { duration: d, delay: t, easing: "steps(" + b.steps + ", end)", fill: "both" });
     last = a;
+    (function (at) { setTimeout(function () { HDD.play(Math.random() < 0.22 ? "seek" : "click", 0.8); }, at); })(t);
     t += d * 0.85;             /* blocks overlap a little, like a busy bus */
   });
   done();                      /* blocks are clipped by their own animations from here on */
@@ -457,6 +508,7 @@ GATE.p.then(function () {
   function setTheme(t) { root.dataset.theme = t; store("pref-theme", t); }
   function run(line) {
     var raw = line.trim(); if (!raw) return;
+    HDD.play("seek", 0.9);
     out("Command: " + raw, "echo");
     hist.push(raw); hpos = hist.length;
     var w = raw.split(/\s+/), name = w[0].toLowerCase(), args = w.slice(1);

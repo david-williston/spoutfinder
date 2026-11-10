@@ -170,7 +170,8 @@
       if (r.done) { finish(); return; }
       var cost = r.value.pocket ? 4 : (r.value.test && r.value.test.frac === 0 ? 0 : 1);
       budget -= cost;
-      if (cost && r.value.test) shown = r.value.test;
+      if (cost && r.value.test) { shown = r.value.test; if (window.HDD && Math.random() < 0.4) HDD.play("click", 0.6); }
+      if (r.value.pocket && window.HDD) HDD.play("seek", 1);
     }
     if (shown) { curTest = shown; $("rn-status").textContent = state.line; }
     frame(curTest); stats();

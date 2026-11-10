@@ -63,3 +63,9 @@ This copy is edited down to about 10 seconds, with the middle of the handshake c
 are the recording's. The dial tone (350 + 440 Hz, as used across Canada
 and the United States) and the ring in the middle (440 + 480 Hz ringback) are
 added over the recording's own line noise.
+
+The hard-drive clicks and seeks come from a recording of an old Western
+Digital drive, ["WD102AA Scratched area read retries"](https://commons.wikimedia.org/wiki/File:WD102AA_Scratched_area_read_retries.ogg)
+by AlepouTheFox, released under
+[CC0](https://creativecommons.org/publicdomain/zero/1.0/) on Wikimedia Commons.
+Short pieces of it are played as the page loads, redraws and changes.

@@ -59,12 +59,14 @@
         j.ctx.imageSmoothingEnabled = true; j.ctx.drawImage(j.img, 0, 0, j.W, j.H);
         j.st.textContent = j.name + "  RECEIVED" + (j.bytes ? "  " + fmt(j.bytes) + " bytes" : "");
         j.st.classList.add("done");
+        if (window.HDD) HDD.play("seek", 0.9);
         resolve();
       }
       function frame(now) {
         if (j.skip || skipAll) return finish();
         var el = now - t0, acc = 0, i = 0;
         while (i < PASSES.length - 1 && el > acc + PASSES[i].ms) { acc += PASSES[i].ms; i++; }
+        if (j.pass !== i) { j.pass = i; if (window.HDD) HDD.play("click", 0.7); }
         var p = Math.min(1, (el - acc) / PASSES[i].ms), blk = PASSES[i].block;
         var row = Math.max(blk, 6), rows = Math.min(j.H, Math.ceil(p * j.H / row) * row);
         j.ctx.save(); j.ctx.beginPath(); j.ctx.rect(0, 0, j.W, rows); j.ctx.clip();
