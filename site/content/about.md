@@ -54,8 +54,10 @@ can be read and studied, but not loaded and run.
 
 ## Credits
 
-The modem you hear when you connect is a real recording: "Dial up connection"
-by ezwa, from [PDSounds](https://pdsounds.org/) (record 116), released into the
-public domain and hosted on
+The modem you hear when you connect is built from a real recording: "Dial up
+connection" by ezwa, from [PDSounds](https://pdsounds.org/) (record 116),
+released into the public domain and hosted on
 [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Dial_up_connection.ogg).
-This copy is trimmed to 32 seconds with a fade-out.
+This copy is edited to 17 seconds. The dial tone, touch tones and handshake
+are the recording's; the ring in the middle is a standard North American
+ringback (440 + 480 Hz) laid over the recording's own line noise.
