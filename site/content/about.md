@@ -68,4 +68,4 @@ The hard-drive clicks and seeks come from a recording of an old Western
 Digital drive, ["WD102AA Scratched area read retries"](https://commons.wikimedia.org/wiki/File:WD102AA_Scratched_area_read_retries.ogg)
 by AlepouTheFox, released under
 [CC0](https://creativecommons.org/publicdomain/zero/1.0/) on Wikimedia Commons.
-Short pieces of it are played as the page loads, redraws and changes.
+Short pieces of it, with the background hum and hiss filtered out, are played as the page loads, redraws and changes.
