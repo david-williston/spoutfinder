@@ -254,8 +254,8 @@ GATE.p.then(function () {
    so if it is still locked the call is placed on that first interaction. */
 (function () {
   var btn = document.getElementById("snd");
-  var store = function (k, v) { try { if (v === undefined) return localStorage.getItem(k); localStorage.setItem(k, v); } catch (e) {} };
-  var sess = function (k, v) { try { if (v === undefined) return sessionStorage.getItem(k); sessionStorage.setItem(k, v); } catch (e) {} };
+  var store = function (k, v) { try { if (v === undefined) return localStorage.getItem(k); if (v === null) localStorage.removeItem(k); else localStorage.setItem(k, v); } catch (e) {} };
+  var sess = function (k, v) { try { if (v === undefined) return sessionStorage.getItem(k); if (v === null) sessionStorage.removeItem(k); else sessionStorage.setItem(k, v); } catch (e) {} };
   var muted = store("modem") === "off";
   var AC = window.AudioContext || window.webkitAudioContext;
   var ctx = null, master = null, timers = [], playing = false;
@@ -361,6 +361,6 @@ GATE.p.then(function () {
     ["pointerdown", "keydown", "touchstart"].forEach(function (e) { window.addEventListener(e, go, { once: true }); });
     setTimeout(function () { if (ctx && ctx.state === "running") start(); }, 400);
   }
-  window.MODEM = { stop: function () { stop(); }, play: function () { if (!muted) { sess("modemPlayed", null); call(); } }, muted: function () { return muted; } };
+  window.MODEM = { state: function () { return ctx && ctx.state; }, stop: function () { stop(); }, play: function () { if (!muted) { sess("modemPlayed", null); call(); } }, muted: function () { return muted; } };
 })();
 </script>
