@@ -138,3 +138,12 @@ h4 { color: var(--cad-magenta); }
 /* 486 mode: blocks stay hidden until the redraw reveals them */
 .x486 .main { visibility: hidden; }
 .x486.x486-run .main { visibility: visible; }
+
+/* modem-download canvases look like the images they replace */
+.post-content canvas.modem { border: 1px solid var(--cad-white); padding: 4px; background: #000; display: block; margin: 12px 0 0; max-width: 100%; max-height: 80vh; width: auto; height: auto; }
+.modem-status { color: var(--cad-green); font-size: 0.8em; margin: 2px 0 14px; white-space: pre-wrap; word-break: break-all; }
+.modem-status.done { color: var(--secondary); }
+
+.cmdline .cmd-right { display: flex; gap: 16px; align-items: baseline; }
+#snd { background: none; border: 0; color: var(--cad-cyan); font: inherit; cursor: pointer; padding: 0; }
+#snd:hover { background: var(--cad-white); color: #000; }

@@ -1,6 +1,7 @@
 ---
 title: "Gallery"
 ShowToc: false
+modemImages: true
 ---
 
 Photographs from the end of the project: one of the prototypes it was meant to

@@ -1,0 +1,94 @@
+{{ if .Params.modemimages }}
+<script>
+/* Gallery: photos "download" over a 14.4k modem, one at a time, coarse blocks first then sharper */
+(function () {
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  var imgs = Array.prototype.slice.call(document.querySelectorAll(".post-content img"));
+  if (!imgs.length) return;
+  var PASSES = [{ block: 28, ms: 1000 }, { block: 10, ms: 1400 }, { block: 4, ms: 1600 }, { block: 1, ms: 2200 }];
+  var queue = [], busy = false, skipAll = false;
+  var size = function (src) {
+    try { var e = performance.getEntriesByName(src)[0]; return (e && (e.encodedBodySize || e.transferSize)) || 0; } catch (x) { return 0; }
+  };
+  var fmt = function (n) { return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","); };
+
+  function setup(img) {
+    var go = function () {
+      var W = img.naturalWidth, H = img.naturalHeight;
+      if (!W) return;
+      var c = document.createElement("canvas");
+      c.width = W; c.height = H; c.className = "modem";
+      c.setAttribute("role", "img"); c.setAttribute("aria-label", img.alt);
+      var st = document.createElement("div"); st.className = "modem-status";
+      var name = (img.getAttribute("src") || "").split("/").pop();
+      st.textContent = name + "  WAITING FOR CARRIER...";
+      img.style.display = "none";
+      img.parentNode.insertBefore(c, img); c.parentNode.insertBefore(st, img.nextSibling);
+      var ctx = c.getContext("2d");
+      ctx.fillStyle = "#000"; ctx.fillRect(0, 0, W, H);
+      ctx.fillStyle = "#00e000"; ctx.textAlign = "center";
+      ctx.font = Math.max(14, Math.round(W / 20)) + "px VT323, monospace";
+      ctx.fillText("WAITING FOR CARRIER...", W / 2, H / 2);
+      var job = { img: img, c: c, ctx: ctx, st: st, W: W, H: H, name: name, bytes: size(img.currentSrc || img.src) };
+      c.addEventListener("click", function () { job.skip = true; });
+      new IntersectionObserver(function (es, ob) {
+        if (es[0].isIntersecting) { ob.disconnect(); queue.push(job); next(); }
+      }, { threshold: 0.15 }).observe(c);
+    };
+    if (img.complete) go(); else img.addEventListener("load", go, { once: true });
+  }
+
+  function next() {
+    if (busy || !queue.length) return;
+    busy = true;
+    run(queue.shift()).then(function () { busy = false; next(); });
+  }
+
+  function run(j) {
+    return new Promise(function (resolve) {
+      var smalls = PASSES.map(function (p) {
+        if (p.block === 1) return null;
+        var s = document.createElement("canvas");
+        s.width = Math.max(1, Math.round(j.W / p.block)); s.height = Math.max(1, Math.round(j.H / p.block));
+        s.getContext("2d").drawImage(j.img, 0, 0, s.width, s.height);
+        return s;
+      });
+      var total = PASSES.reduce(function (t, p) { return t + p.ms; }, 0);
+      var t0 = performance.now();
+      function finish() {
+        j.ctx.imageSmoothingEnabled = true; j.ctx.drawImage(j.img, 0, 0, j.W, j.H);
+        j.st.textContent = j.name + "  RECEIVED" + (j.bytes ? "  " + fmt(j.bytes) + " bytes" : "");
+        j.st.classList.add("done");
+        resolve();
+      }
+      function frame(now) {
+        if (j.skip || skipAll) return finish();
+        var el = now - t0, acc = 0, i = 0;
+        while (i < PASSES.length - 1 && el > acc + PASSES[i].ms) { acc += PASSES[i].ms; i++; }
+        var p = Math.min(1, (el - acc) / PASSES[i].ms), blk = PASSES[i].block;
+        var row = Math.max(blk, 6), rows = Math.min(j.H, Math.ceil(p * j.H / row) * row);
+        j.ctx.save(); j.ctx.beginPath(); j.ctx.rect(0, 0, j.W, rows); j.ctx.clip();
+        j.ctx.imageSmoothingEnabled = blk === 1;
+        j.ctx.drawImage(blk === 1 ? j.img : smalls[i], 0, 0, j.W, j.H);
+        j.ctx.restore();
+        var done = Math.min(1, el / total);
+        var bar = "#".repeat(Math.round(done * 20)) + "-".repeat(20 - Math.round(done * 20));
+        j.st.textContent = j.name + "  [" + bar + "] " + Math.round(done * 100) + "%  14400 bps" +
+          (j.bytes ? "  " + fmt(Math.round(j.bytes * done)) + "/" + fmt(j.bytes) : "");
+        if (el >= total) return finish();
+        requestAnimationFrame(frame);
+      }
+      requestAnimationFrame(frame);
+    });
+  }
+  imgs.forEach(setup);
+  window.addEventListener("keydown", function () { skipAll = true; }, { once: true });
+})();
+</script>
+{{ end }}
+{{ if .Store.Get "hasMermaid" }}
+<script type="module">
+  import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11.4.1/dist/mermaid.esm.min.mjs";
+  mermaid.initialize({ startOnLoad: true, theme: "dark", themeVariables: { fontFamily: "monospace" } });
+</script>
+{{ end }}
