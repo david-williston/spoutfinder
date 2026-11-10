@@ -118,9 +118,9 @@
 
     /* 1. dial tone: 350 + 440 Hz */
     tone([350, 440], t0, 1.5, 0.5);
-    /* 2. dialling 555-0486 as DTMF */
+    /* 2. dialling 1-236-882-2034 as DTMF */
     t = t0 + 1.6;
-    "5550486".split("").forEach(function (d) { tone(DTMF[d], t, 0.08, 0.45); t += 0.17; });
+    "12368822034".split("").forEach(function (d) { tone(DTMF[d], t, 0.08, 0.45); t += 0.17; });
     /* 3. ringback: 440 + 480 Hz */
     t += 0.5; var ring = t;
     tone([440, 480], t, 1.1, 0.35); tone([440, 480], t + 1.7, 1.1, 0.35);
@@ -153,8 +153,8 @@
     var base = t0 - ctx.currentTime;
     var say = function (when, text) { timers.push(setTimeout(function () { CMD.set(text, true); }, (when - ctx.currentTime + base * 0) * 1000)); };
     CMD.lock = true;
-    say(t0, "ATDT 555-0486");
-    say(ring, "ATDT 555-0486  RINGING");
+    say(t0, "ATDT 1-236-882-2034");
+    say(ring, "ATDT 1-236-882-2034  RINGING");
     say(ans, "CARRIER DETECTED");
     say(hs, "NEGOTIATING...");
     say(end, "CONNECT 14400");
