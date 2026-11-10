@@ -1,0 +1,132 @@
+/* AutoCAD R12 for DOS look: black screen, VGA colours, command line */
+:root, :root[data-theme="dark"], :root[data-theme="light"] {
+    --theme: #000;
+    --entry: #000;
+    --primary: #c8c8c8;
+    --secondary: #7a7a7a;
+    --tertiary: #1c1c1c;
+    --content: #c8c8c8;
+    --code-block-bg: #000;
+    --code-bg: #0b0b0b;
+    --border: #5a5a5a;
+    --radius: 0px;
+    --cad-cyan: #00e5e5;
+    --cad-green: #00e000;
+    --cad-yellow: #f5e400;
+    --cad-red: #ff3030;
+    --cad-magenta: #e040e0;
+    --cad-white: #f0f0f0;
+    --main-width: 860px;
+    --nav-width: 960px;
+    color-scheme: dark;
+}
+html, body {
+    background: #000;
+    font-family: "VT323", "IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+    font-size: 21px;
+    line-height: 1.35;
+    letter-spacing: 0.2px;
+    cursor: crosshair;
+}
+body { padding-bottom: 54px; }
+::selection { background: var(--cad-cyan); color: #000; }
+a { color: var(--cad-cyan); }
+a:hover { color: var(--cad-yellow); }
+
+/* headings: yellow, uppercase, like menu titles */
+h1, h2, h3, h4 { font-family: inherit; text-transform: uppercase; letter-spacing: 1px; font-weight: normal; }
+h1 { color: var(--cad-yellow); }
+h2 { color: var(--cad-cyan); border-bottom: 1px dashed #3a3a3a; padding-bottom: 2px; }
+h3 { color: var(--cad-green); }
+h4 { color: var(--cad-magenta); }
+.post-title, .entry-header h1 { color: var(--cad-yellow); font-size: 40px; }
+.post-title::before { content: "Command: "; color: var(--secondary); font-size: 0.55em; }
+.post-description, .post-meta { color: var(--secondary); }
+
+/* top bar = drawing status line */
+.header { border-bottom: 2px solid var(--cad-white); background: #000; }
+.nav { max-width: var(--nav-width); }
+.logo a { color: var(--cad-white); text-transform: uppercase; letter-spacing: 3px; }
+.logo a::before { content: "[ "; color: var(--cad-red); }
+.logo a::after { content: " ]"; color: var(--cad-red); }
+#menu a { text-transform: uppercase; color: var(--cad-cyan); padding: 0 6px; }
+#menu a:hover, #menu .active { background: var(--cad-white); color: #000; }
+#menu .active { border: 0; font-weight: normal; }
+.main { max-width: var(--main-width); }
+
+/* boxes: white double-line frame, menu-style highlight */
+.first-entry, .post-entry, .post-content table, .toc, .home-info {
+    border-radius: 0;
+}
+.post-entry {
+    background: #000;
+    border: 1px solid var(--border);
+    box-shadow: 4px 4px 0 #1a1a1a;
+    transition: none;
+}
+.post-entry:hover { background: var(--cad-white); border-color: var(--cad-white); transform: none; }
+.post-entry:hover .entry-header h2,
+.post-entry:hover .entry-content,
+.post-entry:hover .entry-footer { color: #000; }
+.entry-header h2 { color: var(--cad-yellow); border: 0; font-size: 28px; }
+.entry-content { color: var(--content); }
+.entry-link:focus { outline: none; }
+.first-entry { min-height: 0; margin: 24px 0; }
+.home-info { border: 2px double var(--cad-white); padding: 16px 20px; background: #000; }
+.home-info .entry-header h1 { margin: 0 0 8px; }
+.home-info .entry-header h1::before { content: "SPOUTFINDER> "; color: var(--cad-green); font-size: 0.5em; }
+
+.toc { background: #000; border: 1px solid var(--border); }
+.toc summary { color: var(--cad-green); text-transform: uppercase; }
+.breadcrumbs { color: var(--secondary); text-transform: uppercase; }
+
+/* code and tables */
+.post-content pre, .highlight pre, pre {
+    background: #000 !important;
+    border: 1px solid var(--cad-green);
+    border-radius: 0;
+    color: var(--cad-green);
+    font-family: "VT323", ui-monospace, monospace;
+    font-size: 19px;
+    line-height: 1.25;
+}
+.post-content code, code { font-family: "VT323", ui-monospace, monospace; background: #101010; color: var(--cad-yellow); border-radius: 0; }
+.post-content pre code { background: transparent; color: inherit; }
+.highlight .c, .highlight .c1, .highlight .cm { color: #2f9f6f; font-style: normal; }
+.highlight .s, .highlight .s2, .highlight .s1 { color: var(--cad-yellow); }
+.highlight .nb, .highlight .nv, .highlight .nf, .highlight .k, .highlight .nl { color: var(--cad-cyan); }
+.highlight .mi, .highlight .mf { color: var(--cad-magenta); }
+.copy-code { background: #000; color: var(--cad-white); border: 1px solid var(--border); border-radius: 0; font-family: inherit; }
+.post-content table { border: 1px solid var(--border); border-collapse: collapse; font-size: 0.9em; }
+.post-content th, .post-content td { border: 1px solid #333; padding: 2px 8px; }
+.post-content th { color: var(--cad-cyan); text-transform: uppercase; background: #0b0b0b; }
+.post-content table tbody tr:hover { background: #12202a; }
+.post-content blockquote { border-left: 4px solid var(--cad-red); color: var(--secondary); }
+.post-content hr, hr { border-color: #333; }
+.mermaid { background: #000; border: 1px solid var(--border); padding: 8px; overflow-x: auto; }
+
+/* AME drawing on the home page */
+.cad-screen { margin: 0 0 20px; border: 2px solid var(--cad-white); background: #000; }
+.cad-screen svg { display: block; width: 100%; height: auto; }
+.cad-screen figcaption {
+    border-top: 1px solid var(--border); padding: 4px 10px; color: var(--secondary); font-size: 0.85em;
+}
+.cad-screen text { font-family: "VT323", monospace; }
+
+/* command line pinned to the bottom, like the DOS text window */
+.cmdline {
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 50;
+    background: #000; border-top: 2px solid var(--cad-white);
+    padding: 4px 16px; color: var(--cad-white);
+    font-size: 20px; display: flex; justify-content: space-between; gap: 16px;
+}
+.cmdline .cursor { display: inline-block; width: 0.55em; height: 0.9em; background: var(--cad-green); vertical-align: -2px; animation: blink 1s steps(1) infinite; }
+.cmdline .coords { color: var(--secondary); white-space: nowrap; }
+@keyframes blink { 50% { opacity: 0; } }
+.footer { display: none; }
+.top-link { display: none; }
+@media (max-width: 600px) {
+    html, body { font-size: 19px; }
+    .cmdline .coords { display: none; }
+}
+@media (prefers-reduced-motion: reduce) { .cmdline .cursor { animation: none; } }

@@ -43,7 +43,10 @@ for i, f in enumerate(sorted((repo / "src").glob("*.lsp")), 1):
     text = f.read_text()
     m = re.match(r"((?:;;;.*\n)+)", text)
     header = m.group(1) if m else ""
-    intro = "\n".join(re.sub(r"^;;;\s?", "", l) for l in header.splitlines())
+    lines = [re.sub(r"^;;;\s?", "", l) for l in header.splitlines()]
+    intro = ""
+    for l in lines:
+        intro += ("\n\n" if re.match(r"(Source|NOTE):", l) or not intro else "\n") + l
     first = intro.splitlines()[0] if intro else f.name
     title = f.name
     summary = first.split("--", 1)[-1].strip()

@@ -1,10 +1,10 @@
 ---
 title: "locations.lsp"
 weight: 30
-summary: "spout grid stepping and the pouring-location lists"
 ---
 
 locations.lsp -- spout grid stepping and the pouring-location lists
+
 Source: original program listing, pages 23-24.
 
 ```lisp

@@ -1,10 +1,10 @@
 ---
 title: "session.lsp"
 weight: 60
-summary: "environment restore, error handling and default values"
 ---
 
 session.lsp -- environment restore, error handling and default values
+
 Source: original program listing, page 25.
 
 ```lisp

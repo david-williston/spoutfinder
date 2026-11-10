@@ -1,10 +1,10 @@
 ---
 title: "output.lsp"
 weight: 40
-summary: "write the combined location list to the .sdf data file"
 ---
 
 output.lsp -- write the combined location list to the .sdf data file
+
 Source: original program listing, page 26.
 
 ```lisp

@@ -1,11 +1,12 @@
 ---
 title: "getparams.lsp"
 weight: 10
-summary: "user prompts for the pouring parameters"
 ---
 
 getparams.lsp -- user prompts for the pouring parameters
+
 Source: original program listing, pages 19-20.
+
 NOTE: this is the tail of the GETPARAMS function. The opening of the
 function (and the prompts for volume flow rate and spout diameter) were
 on pages 1-18, which are not part of this transcription. The final ")"

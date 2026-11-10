@@ -6,8 +6,10 @@ pagination:
   pagerSize: 10
 
 params:
-  description: "SpoutFinder: a 1994 BCIT CAD/CAM final project in AutoLISP and AutoCAD AME"
-  defaultTheme: auto
+  mainSections: [docs]
+  description: "A historical archive: SpoutFinder, a 1994 BCIT CAD/CAM student project written in AutoLISP for AutoCAD Release 12 on a 486 PC"
+  defaultTheme: dark
+  disableThemeToggle: true
   ShowReadingTime: false
   ShowBreadCrumbs: true
   ShowCodeCopyButtons: true
@@ -15,9 +17,12 @@ params:
   homeInfoParams:
     Title: SpoutFinder
     Content: >
-      An AutoLISP program for AutoCAD that works out where a shoe-sole
-      mold pouring machine should place its spouts. Written in 1994 as a
-      BCIT CAD/CAM Technology final project for Wetless Aqua Gear.
+      A historical archive. In 1994 a student at BCIT wrote a program in
+      AutoLISP, inside AutoCAD Release 12 for DOS on a 486 PC, to decide
+      where a shoe-sole pouring machine should put its spouts. This site
+      keeps the proposal, the reports and the code as a look at how
+      engineering was done when computers were slow and expensive and
+      "printing" meant ink on paper.
   socialIcons:
     - name: github
       url: https://github.com/david-williston/spoutfinder
@@ -30,6 +35,9 @@ menu:
     - name: Documents
       url: /docs/
       weight: 20
+    - name: Context
+      url: /context/
+      weight: 25
     - name: Source
       url: /source/
       weight: 30

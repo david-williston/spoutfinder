@@ -1,10 +1,10 @@
 ---
 title: "intersect.lsp"
 weight: 20
-summary: "spout/pocket intersection and validity test"
 ---
 
 intersect.lsp -- spout/pocket intersection and validity test
+
 Source: original program listing, pages 21-22.
 
 ```lisp
