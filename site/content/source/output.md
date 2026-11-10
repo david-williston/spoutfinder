@@ -1,6 +1,6 @@
 ---
 title: "output.lsp"
-weight: 40
+weight: 140
 ---
 
 output.lsp -- write the combined location list to the .sdf data file

@@ -134,3 +134,7 @@ h4 { color: var(--cad-magenta); }
 /* photographs: framed like plotted drawings */
 .post-content img { border: 1px solid var(--cad-white); padding: 4px; background: #000; display: block; margin: 12px 0; max-width: 100%; height: auto; }
 .post-content img[alt*="prototype" i], .post-content img[alt*="printed photograph" i] { max-height: 80vh; width: auto; }
+
+/* 486 mode: blocks stay hidden until the redraw reveals them */
+.x486 .main { visibility: hidden; }
+.x486.x486-run .main { visibility: visible; }

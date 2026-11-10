@@ -51,10 +51,6 @@ for i, f in enumerate(sorted((repo / "src").glob("*.lsp")), 1):
     title = f.name
     summary = first.split("--", 1)[-1].strip()
     body = f"{intro}\n\n```lisp\n{text[len(header):].lstrip()}```\n"
-    page(source / (f.stem + ".md"), title, body, i * 10, summary)
+    page(source / (f.stem + ".md"), title, body, 100 + i * 10, summary)
 
-# ---- architecture ----------------------------------------------------------
-arch = (repo / "docs" / "architecture.md").read_text()
-arch = re.sub(r"\A# .*\n+", "", arch)
-page(content / "architecture.md", "Architecture", arch, 0)
 print("synced")

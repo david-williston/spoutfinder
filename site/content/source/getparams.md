@@ -1,6 +1,6 @@
 ---
 title: "getparams.lsp"
-weight: 10
+weight: 110
 ---
 
 getparams.lsp -- user prompts for the pouring parameters

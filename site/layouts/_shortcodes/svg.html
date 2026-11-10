@@ -1,0 +1,2 @@
+{{- $r := .Page.Resources.Get (.Get 0) -}}
+<figure class="cad-screen">{{ $r.Content | safeHTML }}{{ with .Get 1 }}<figcaption>{{ . | markdownify }}</figcaption>{{ end }}</figure>
