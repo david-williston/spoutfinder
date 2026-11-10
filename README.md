@@ -16,7 +16,7 @@ and writes the valid locations to a space-delimited `.sdf` data file.
 | `src/locations.lsp` | `buildlist`, `nextspout`, `nextrow`, `combine` | 23-24 |
 | `src/session.lsp` | `my_reset`, `my_error`, `setdefaults` | 25 |
 | `src/output.lsp` | `output`, startup banner | 26 |
-| `docs/variables.md` | Variable listing | 27 |
+| `docs/` | Proposal, progress report, final report, variable listing (see `docs/README.md`) | 27 |
 
 ## Status
 
