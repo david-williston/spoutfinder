@@ -290,7 +290,7 @@ GATE.p.then(function () {
 
   function schedule(buf) {
     var t0 = ctx.currentTime + 0.05;
-    master = ctx.createGain(); master.gain.value = 0.9; master.connect(ctx.destination);
+    master = ctx.createGain(); master.gain.value = 0.8; master.connect(ctx.destination);
     var src = ctx.createBufferSource(); src.buffer = buf; src.connect(master); src.start(t0);
     var T = { ring: 3.15, carrier: 5.8, nego: 7.6, end: 10.1 };
     var say = function (when, text) { timers.push(setTimeout(function () { CMD.set(text, true); }, when * 1000)); };
