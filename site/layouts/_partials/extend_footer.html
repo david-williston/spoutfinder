@@ -249,6 +249,38 @@ GATE.p.then(function () {
 </script>
 
 <script>
+/* AutoCAD-style cursor: full-width crosshair lines with a small pick box at the intersection.
+   Over clickable things it becomes the plain arrow, like the screen menu in R12. Mouse users only. */
+(function () {
+  if (!window.matchMedia("(pointer: fine)").matches) return;
+  var root = document.documentElement;
+  var wrap = document.createElement("div");
+  wrap.id = "cad-cursor"; wrap.setAttribute("aria-hidden", "true");
+  wrap.innerHTML = '<i class="cc-v"></i><i class="cc-h"></i><i class="cc-box"></i>';
+  document.body.appendChild(wrap);
+  var v = wrap.querySelector(".cc-v"), h = wrap.querySelector(".cc-h"), box = wrap.querySelector(".cc-box");
+  var x = -100, y = -100, raf = 0, active = false;
+  var CLICKABLE = "a, button, summary, input, select, textarea, label, [role=button], #dialup *, .bbs-line";
+  function draw() {
+    raf = 0;
+    v.style.transform = "translateX(" + x + "px)";
+    h.style.transform = "translateY(" + y + "px)";
+    box.style.transform = "translate(" + (x - 5) + "px," + (y - 5) + "px)";
+  }
+  function on(e) {
+    x = e.clientX; y = e.clientY;
+    box.classList.toggle("down", e.buttons === 1);
+    if (!active) { active = true; root.classList.add("cad-cursor-on"); }
+    root.classList.toggle("cad-arrow", !!(e.target.closest && e.target.closest(CLICKABLE)));
+    if (!raf) raf = requestAnimationFrame(draw);
+  }
+  window.addEventListener("mousemove", on, { passive: true });
+  window.addEventListener("mousedown", function () { box.classList.add("down"); });
+  window.addEventListener("mouseup", function () { box.classList.remove("down"); });
+  document.addEventListener("mouseleave", function () { root.classList.remove("cad-cursor-on"); active = false; });
+})();
+</script>
+<script>
 /* Modem sound on the first visit of a session: a real recording of a dial-up call (see below). Browsers keep audio locked until the first click or key,
    so if it is still locked the call is placed on that first interaction. */
 (function () {

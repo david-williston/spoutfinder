@@ -28,7 +28,6 @@ html, body {
     font-size: 21px;
     line-height: 1.35;
     letter-spacing: 0.2px;
-    cursor: crosshair;
 }
 body { padding-bottom: 54px; }
 ::selection { background: var(--cad-cyan); color: #000; }
@@ -219,3 +218,18 @@ a.bbs-line:hover, a.bbs-line:focus-visible { background: var(--cad-white); color
 #theme-toggle:hover { background: var(--cad-white); color: var(--bg); border-color: var(--cad-white); }
 #theme-toggle svg { height: 18px; width: 18px; stroke: currentColor; }
 .logo-switches { align-items: center; }
+
+/* AutoCAD crosshair: full-screen lines + pick box, inverted against whatever is underneath */
+#cad-cursor { position: fixed; inset: 0; z-index: 99999; pointer-events: none; mix-blend-mode: difference; overflow: hidden; display: none; }
+.cad-cursor-on #cad-cursor { display: block; }
+.cad-cursor-on.cad-arrow #cad-cursor { display: none; }
+#cad-cursor i { position: absolute; left: 0; top: 0; display: block; will-change: transform; }
+#cad-cursor .cc-v { width: 1px; height: 100vh; background: #fff; }
+#cad-cursor .cc-h { height: 1px; width: 100vw; background: #fff; }
+#cad-cursor .cc-box { width: 11px; height: 11px; box-sizing: border-box; border: 1px solid #fff; background: transparent; }
+#cad-cursor .cc-box.down { background: #fff; }
+/* hide the system cursor once ours is running; clickable things get the plain arrow */
+.cad-cursor-on, .cad-cursor-on * { cursor: none !important; }
+.cad-cursor-on.cad-arrow, .cad-cursor-on.cad-arrow * { cursor: default !important; }
+
+html, body { cursor: crosshair; } /* fallback until the custom crosshair starts */
